@@ -1,7 +1,15 @@
 "use client";
 
 import { motion, useReducedMotion } from "framer-motion";
-import type { ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
+
+const ease = [0.22, 1, 0.36, 1] as const;
+
+function useReady() {
+  const [ready, setReady] = useState(false);
+  useEffect(() => setReady(true), []);
+  return ready;
+}
 
 export function FadeIn({
   children,
@@ -13,18 +21,18 @@ export function FadeIn({
   delay?: number;
 }) {
   const reduce = useReducedMotion();
+  const ready = useReady();
 
-  if (reduce) {
+  if (reduce || !ready) {
     return <div className={className}>{children}</div>;
   }
 
   return (
     <motion.div
       className={className}
-      initial={{ opacity: 0, y: 24 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.25 }}
-      transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1], delay }}
+      initial={{ opacity: 0, y: 18 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.55, ease, delay }}
     >
       {children}
     </motion.div>
@@ -39,8 +47,9 @@ export function Stagger({
   className?: string;
 }) {
   const reduce = useReducedMotion();
+  const ready = useReady();
 
-  if (reduce) {
+  if (reduce || !ready) {
     return <div className={className}>{children}</div>;
   }
 
@@ -48,11 +57,10 @@ export function Stagger({
     <motion.div
       className={className}
       initial="hidden"
-      whileInView="show"
-      viewport={{ once: true, amount: 0.2 }}
+      animate="show"
       variants={{
         hidden: {},
-        show: { transition: { staggerChildren: 0.12 } },
+        show: { transition: { staggerChildren: 0.1, delayChildren: 0.05 } },
       }}
     >
       {children}
@@ -67,21 +75,15 @@ export function StaggerItem({
   children: ReactNode;
   className?: string;
 }) {
-  const reduce = useReducedMotion();
-
-  if (reduce) {
-    return <div className={className}>{children}</div>;
-  }
-
   return (
     <motion.div
       className={className}
       variants={{
-        hidden: { opacity: 0, y: 20 },
+        hidden: { opacity: 0, y: 16 },
         show: {
           opacity: 1,
           y: 0,
-          transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] },
+          transition: { duration: 0.45, ease },
         },
       }}
     >

@@ -8,7 +8,7 @@ import { services, site } from "@/lib/site";
 export default function HomePage() {
   return (
     <main className="flex-1">
-      <section className="relative isolate min-h-[100svh] overflow-hidden">
+      <section className="relative isolate min-h-screen overflow-hidden">
         <Image
           src="/images/hero-banner.jpg"
           alt="Anadolu Lojistik filo"
@@ -20,7 +20,7 @@ export default function HomePage() {
         <div className="absolute inset-0 bg-gradient-to-r from-navy/95 via-navy/78 to-navy/35" />
         <div className="absolute inset-0 bg-gradient-to-t from-navy via-transparent to-navy/40" />
 
-        <div className="relative mx-auto flex min-h-[100svh] max-w-7xl flex-col justify-end px-4 pb-20 pt-32 sm:px-6 lg:px-8">
+        <div className="relative mx-auto flex min-h-screen max-w-7xl flex-col justify-end px-4 pb-20 pt-32 sm:px-6 lg:px-8">
           <FadeIn>
             <p className="font-display text-5xl tracking-[0.06em] text-white sm:text-6xl lg:text-7xl">
               ANADOLU
