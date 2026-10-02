@@ -91,6 +91,12 @@ export function Footer() {
             <Link href="/iletisim" className="text-white/75 hover:text-white">
               Bize Ulaşın
             </Link>
+            <Link href="/takip" className="text-white/75 hover:text-white">
+              Takip Sorgulama
+            </Link>
+            <Link href="/admin" className="text-white/75 hover:text-white">
+              Yönetim Paneli
+            </Link>
           </div>
         </div>
       </div>

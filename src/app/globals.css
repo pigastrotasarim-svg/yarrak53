@@ -106,3 +106,8 @@
     @apply font-sans scroll-smooth;
   }
 }
+
+.leaflet-container {
+  font: inherit;
+  z-index: 0;
+}

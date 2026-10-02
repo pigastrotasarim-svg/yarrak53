@@ -1,31 +1,61 @@
 # Anadolu Lojistik
 
-Türkiye genelinde karayolu taşımacılığı, proje lojistiği ve depolama hizmetleri sunan kurumsal lojistik web sitesi.
+Türkiye genelinde karayolu taşımacılığı, proje lojistiği ve depolama hizmetleri sunan kurumsal lojistik web sitesi. Admin paneli ile takip kodu oluşturma, il/ilçe seçimi, mesafe hesabı ve Türkiye haritasında kamyon animasyonu içerir.
 
 ## Özellikler
 
 - Ana sayfa ve marka odaklı hero
-- Sevkiyat takip sorgulama (`/takip`)
-- Kurumsal sayfalar (hakkımızda, etik, yönetim sistemleri, KVKK)
-- Hizmetler ve hizmet detay sayfaları
-- İletişim formu ve şirket bilgileri
-- Özel logo ve banner görselleri
+- Canlı sevkiyat takibi + Türkiye haritası (`/takip`)
+- Admin paneli (`/admin`) — takip kodu, durum güncelleme
+- Türkiye il/ilçe API (turkiyeapi.dev, offline fallback)
+- Kurumsal / hizmetler / iletişim sayfaları
 
 ## Geliştirme
 
 ```bash
 npm install
+cp .env.example .env
+npm run db:setup
 npm run dev -- --port 43123
 ```
 
-Tarayıcıda [http://127.0.0.1:43123](http://127.0.0.1:43123) adresini açın.
+- Site: [http://127.0.0.1:43123](http://127.0.0.1:43123)
+- Admin: [http://127.0.0.1:43123/admin](http://127.0.0.1:43123/admin)
+- Varsayılan giriş: `admin` / `anadolu2026`
 
-## Örnek takip numaraları
+## Admin akışı
 
-- `AL2026001847`
-- `AL2026002291`
-- `AL2026003105`
+1. `/admin` ile giriş yapın
+2. **Yeni takip** → Ad Soyad, GSM, çıkış il/ilçe, teslim il/ilçe
+3. Sistem takip kodu üretir, şehirler arası mesafeyi hesaplar
+4. Durumu güncelleyin: Yükleme yapıldı → Yola çıktı → Yolda → …
+5. Müşteri `/takip` üzerinden kodu sorgular; haritada kamyon istikamet üzerinde ilerler
+
+## Plesk’e kurulum
+
+Next.js + SQLite/Node.js gerekir.
+
+### Node.js ayarları
+| Ayar | Değer |
+|------|--------|
+| Node.js | 20.x |
+| Application root | `package.json` klasörü |
+| Startup file | `server.js` |
+| Mode | production |
+
+### Komutlar
+```bash
+npm install
+cp .env.example .env   # şifreleri değiştirin
+npx prisma migrate deploy
+npm run db:seed
+npm run build
+# Plesk: Restart App
+```
+
+`DATABASE_URL` örneği: `file:./prisma/prod.db`  
+Plesk’te yazılabilir bir yola koyun.
 
 ## Teknoloji
 
-Next.js, TypeScript, Tailwind CSS, shadcn/ui
+Next.js, Prisma (SQLite), Leaflet, Türkiye API, TypeScript, Tailwind, shadcn/ui
