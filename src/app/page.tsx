@@ -38,6 +38,7 @@ export default function HomePage() {
             <div className="mt-8 flex flex-wrap gap-3">
               <Button
                 render={<Link href="/takip" />}
+                nativeButton={false}
                 size="lg"
                 className="bg-amber text-navy hover:bg-amber-light"
               >
@@ -46,6 +47,7 @@ export default function HomePage() {
               </Button>
               <Button
                 render={<Link href="/hizmetler" />}
+                nativeButton={false}
                 size="lg"
                 variant="outline"
                 className="border-white/30 bg-white/5 text-white hover:bg-white/15 hover:text-white"
@@ -189,6 +191,7 @@ export default function HomePage() {
           <FadeIn delay={0.1}>
             <Button
               render={<Link href="/takip" />}
+                nativeButton={false}
               size="lg"
               className="bg-navy text-white hover:bg-navy-deep"
             >

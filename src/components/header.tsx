@@ -109,6 +109,7 @@ export function Header() {
           )}
           <Button
             render={<Link href="/takip" />}
+                nativeButton={false}
             className="bg-amber text-navy hover:bg-amber-light"
           >
             Takip Et

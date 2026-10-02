@@ -59,6 +59,7 @@ export function PageHero({
             <div className="mt-8">
               <Button
                 render={<Link href={ctaHref} />}
+                nativeButton={false}
                 size="lg"
                 className="bg-amber text-navy hover:bg-amber-light"
               >

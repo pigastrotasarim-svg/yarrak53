@@ -63,12 +63,14 @@ export default async function ServiceDetailPage({ params }: Props) {
           <div className="mt-8 flex flex-wrap gap-3">
             <Button
               render={<Link href="/takip" />}
+                nativeButton={false}
               className="bg-navy text-white hover:bg-navy-deep"
             >
               Sevkiyat Takibi
             </Button>
             <Button
               render={<Link href="/hizmetler" />}
+                nativeButton={false}
               variant="outline"
               className="border-navy/20"
             >
