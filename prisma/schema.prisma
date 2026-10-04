@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -15,27 +15,27 @@ model AdminUser {
 }
 
 model Shipment {
-  id              String   @id @default(cuid())
-  code            String   @unique
-  customerName    String
-  gsm             String
-  originProvince  String
-  originDistrict  String
-  originLat       Float
-  originLng       Float
-  destProvince    String
-  destDistrict    String
-  destLat         Float
-  destLng         Float
-  distanceKm      Float
-  status          String   @default("YuklemeYapildi")
-  notes           String?
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  departedAt      DateTime?
-  estimatedAt     DateTime?
-  deliveredAt     DateTime?
-  events          TrackingEvent[]
+  id             String           @id @default(cuid())
+  code           String           @unique
+  customerName   String
+  gsm            String
+  originProvince String
+  originDistrict String
+  originLat      Float
+  originLng      Float
+  destProvince   String
+  destDistrict   String
+  destLat        Float
+  destLng        Float
+  distanceKm     Float
+  status         String           @default("YuklemeYapildi")
+  notes          String?
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  departedAt     DateTime?
+  estimatedAt    DateTime?
+  deliveredAt    DateTime?
+  events         TrackingEvent[]
 }
 
 model TrackingEvent {

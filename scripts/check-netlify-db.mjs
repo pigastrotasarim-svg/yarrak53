@@ -11,10 +11,8 @@ if (!url) {
 
 if (url.startsWith("file:")) {
   console.error("❌ Netlify'de SQLite (file:...) kullanılamaz.");
-  console.error("   Ücretsiz Neon Postgres alıp DATABASE_URL'i oraya bağlayın:");
-  console.error("   https://neon.tech");
-  console.error("   Örnek: postgresql://USER:PASS@HOST/DB?sslmode=require");
-  console.error("   Sonra prisma/schema.prisma içinde provider = \"postgresql\" yapın.");
+  console.error("   Neon Postgres: https://neon.tech");
+  console.error("   veya Railway kullanın: RAILWAY.md");
   process.exit(1);
 }
 

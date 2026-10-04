@@ -13,8 +13,11 @@ Türkiye genelinde karayolu taşımacılığı, proje lojistiği ve depolama hiz
 ## Geliştirme
 
 ```bash
-npm install
+# Postgres (Docker)
+docker compose up -d
+
 cp .env.example .env
+npm install
 npm run db:setup
 npm run dev -- --port 43123
 ```
@@ -31,44 +34,27 @@ npm run dev -- --port 43123
 4. Durumu güncelleyin: Yükleme yapıldı → Yola çıktı → Yolda → …
 5. Müşteri `/takip` üzerinden kodu sorgular; haritada kamyon istikamet üzerinde ilerler
 
-## Netlify’ye yükleme
+## Railway’ye yükleme (önerilen)
 
-Adım adım rehber: [NETLIFY.md](./NETLIFY.md)
+Adım adım: [RAILWAY.md](./RAILWAY.md)
 
 Özet:
-1. [Neon](https://neon.tech) ile ücretsiz Postgres oluştur  
-2. `prisma/schema.prisma` → `provider = "postgresql"`  
-3. GitHub’a push → Netlify’den Import  
-4. Env: `DATABASE_URL`, `ADMIN_USERNAME`, `ADMIN_PASSWORD`, `AUTH_SECRET`  
-5. Deploy (`netlify.toml` hazır)
+1. GitHub’a push  
+2. Railway → New Project → GitHub repo  
+3. **PostgreSQL** ekle  
+4. Env: `DATABASE_URL` (Postgres reference), `ADMIN_USERNAME`, `ADMIN_PASSWORD`, `AUTH_SECRET`  
+5. Domain üret → `/admin` ile giriş
 
-> Netlify’de SQLite kullanılamaz; admin/takip için Postgres şart.
+## Netlify
 
-## Plesk’e kurulum
+Mümkün (Postgres ile). Rehber: [NETLIFY.md](./NETLIFY.md)  
+Veritabanlı kullanım için **Railway daha kolay**.
 
-Next.js + SQLite/Node.js gerekir.
+## Plesk
 
-### Node.js ayarları
-| Ayar | Değer |
-|------|--------|
-| Node.js | 20.x |
-| Application root | `package.json` klasörü |
-| Startup file | `server.js` |
-| Mode | production |
-
-### Komutlar
-```bash
-npm install
-cp .env.example .env   # şifreleri değiştirin
-npx prisma migrate deploy
-npm run db:seed
-npm run build
-# Plesk: Restart App
-```
-
-`DATABASE_URL` örneği: `file:./prisma/prod.db`  
-Plesk’te yazılabilir bir yola koyun.
+Node.js 20 + Postgres (veya harici DB). Startup: `server.js`  
+`DATABASE_URL` Postgres connection string olmalı.
 
 ## Teknoloji
 
-Next.js, Prisma (SQLite), Leaflet, Türkiye API, TypeScript, Tailwind, shadcn/ui
+Next.js, Prisma (PostgreSQL), Leaflet, Türkiye API, TypeScript, Tailwind, shadcn/ui

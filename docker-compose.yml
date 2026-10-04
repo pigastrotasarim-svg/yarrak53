@@ -1,0 +1,14 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: anadolu
+      POSTGRES_PASSWORD: anadolu2026
+      POSTGRES_DB: anadolu_lojistik
+    ports:
+      - "5432:5432"
+    volumes:
+      - anadolu_pg:/var/lib/postgresql/data
+
+volumes:
+  anadolu_pg:

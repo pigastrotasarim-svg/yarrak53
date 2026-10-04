@@ -1,32 +1,21 @@
 # Netlify’ye yükleme (Anadolu Lojistik)
 
-Bu proje **Next.js + veritabanı** kullanıyor. Netlify’de SQLite dosyası kalıcı olmaz; bu yüzden ücretsiz **Neon Postgres** gerekir.
+Bu proje **Next.js + PostgreSQL** kullanıyor. Netlify’de Neon/Postgres `DATABASE_URL` gerekir.
+
+> Daha kolay yol: [RAILWAY.md](./RAILWAY.md) (Postgres tek tık).
 
 ## 1) Neon veritabanı (ücretsiz)
 
 1. [neon.tech](https://neon.tech) → hesap aç → yeni proje
 2. Connection string kopyala (`postgresql://...?...sslmode=require`)
 
-## 2) Projeyi Postgres’e çevir
-
-`prisma/schema.prisma` içinde:
-
-```prisma
-datasource db {
-  provider = "postgresql"   // sqlite değil
-  url      = env("DATABASE_URL")
-}
-```
-
-Sonra lokalde bir kez (Neon URL ile):
+## 2) Migration
 
 ```bash
 # .env içine Neon DATABASE_URL yapıştır
 npx prisma migrate deploy
 npm run db:seed
 ```
-
-> Not: Lokal geliştirmede SQLite kullanmaya devam edeceksen ayrı branch/ortam tut; Netlify production her zaman Postgres olmalı.
 
 ## 3) GitHub’a push
 
