@@ -2,6 +2,8 @@
 
 Bu proje **Next.js + PostgreSQL** ile Railway’de çalışır.
 
+> Node.js **20+** gerekir (`nixpacks.toml` / `.nvmrc` / `package.json` engines).
+
 ## 1) GitHub
 
 Repoyu GitHub’a push’la (veya Railway GitHub bağla).
