@@ -4,7 +4,6 @@ import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { CheckCircle2, PackageSearch, Truck } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { FadeIn } from "@/components/motion";
 import { TrackingMapClient } from "@/components/tracking-map-client";
@@ -55,9 +54,8 @@ type TrackingView = {
 
 export function TrackingForm() {
   const searchParams = useSearchParams();
-  const initial = searchParams.get("q") ?? "";
-  const [query, setQuery] = useState(initial);
-  const [submitted, setSubmitted] = useState(initial.trim().toUpperCase());
+  const initial = (searchParams.get("q") ?? "").trim().toUpperCase();
+  const [submitted, setSubmitted] = useState(initial);
   const [tracking, setTracking] = useState<TrackingView | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -69,17 +67,28 @@ export function TrackingForm() {
     async function load() {
       setLoading(true);
       setError("");
-      const res = await fetch(`/api/track/${encodeURIComponent(submitted)}`);
-      if (cancelled) return;
-      if (res.ok) {
-        const data = await res.json();
-        setTracking(data.tracking);
-        setLoading(false);
-        return;
+      try {
+        const res = await fetch(
+          `/api/track/${encodeURIComponent(submitted)}`,
+          { credentials: "same-origin", cache: "no-store" }
+        );
+        if (cancelled) return;
+        if (res.ok) {
+          const data = await res.json();
+          setTracking(data.tracking);
+          setLoading(false);
+          return;
+        }
+        setTracking(null);
+        setError("Kayıt bulunamadı");
+      } catch {
+        if (!cancelled) {
+          setTracking(null);
+          setError("Bağlantı hatası");
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
       }
-      setTracking(null);
-      setError("Kayıt bulunamadı");
-      setLoading(false);
     }
 
     load();
@@ -90,9 +99,18 @@ export function TrackingForm() {
     };
   }, [submitted]);
 
-  function onSubmit(e: React.FormEvent) {
+  function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setSubmitted(query.trim().toUpperCase());
+    const fd = new FormData(e.currentTarget);
+    const code = String(fd.get("q") || "")
+      .trim()
+      .toUpperCase();
+    if (!code) {
+      setError("Takip numarası girin");
+      return;
+    }
+    setError("");
+    setSubmitted(code);
   }
 
   const livePosition = useMemo(() => tracking?.position ?? null, [tracking]);
@@ -124,12 +142,13 @@ export function TrackingForm() {
               Takip numarası
             </Label>
             <div className="flex flex-col gap-3 sm:flex-row">
-              <Input
+              <input
                 id="tracking"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Örn. AL2026123456"
-                className="h-11 border-navy/15 bg-white"
+                name="q"
+                defaultValue={initial}
+                placeholder="Örn. AL2026695781"
+                autoComplete="off"
+                className="h-11 w-full rounded-lg border border-navy/15 bg-white px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
               />
               <Button
                 type="submit"
@@ -138,6 +157,9 @@ export function TrackingForm() {
                 Sorgula
               </Button>
             </div>
+            <p className="text-xs text-slate-ink/50">
+              Örnek: AL2026695781
+            </p>
           </div>
         </form>
       </FadeIn>

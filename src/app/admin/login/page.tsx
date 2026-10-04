@@ -1,36 +1,41 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 export default function AdminLoginPage() {
-  const router = useRouter();
-  const [username, setUsername] = useState("admin");
-  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  async function onSubmit(e: React.FormEvent) {
+  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setLoading(true);
     setError("");
-    const res = await fetch("/api/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, password }),
-    });
-    setLoading(false);
-    if (!res.ok) {
-      const data = await res.json().catch(() => ({}));
-      setError(data.error || "Giriş başarısız");
-      return;
+    const fd = new FormData(e.currentTarget);
+    const username = String(fd.get("username") || "").trim();
+    const password = String(fd.get("password") || "");
+
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "same-origin",
+        body: JSON.stringify({ username, password }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setError(data.error || "Giriş başarısız");
+        setLoading(false);
+        return;
+      }
+      // Hard navigate so session cookie is applied reliably behind tunnels.
+      window.location.assign("/admin");
+    } catch {
+      setError("Bağlantı hatası, tekrar deneyin");
+      setLoading(false);
     }
-    router.push("/admin");
-    router.refresh();
   }
 
   return (
@@ -51,25 +56,27 @@ export default function AdminLoginPage() {
             <Label htmlFor="username" className="mb-2 inline-block">
               Kullanıcı adı
             </Label>
-            <Input
+            <input
               id="username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              className="h-11"
+              name="username"
+              defaultValue="admin"
               required
+              autoComplete="username"
+              className="h-11 w-full rounded-lg border border-input bg-white px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
             />
           </div>
           <div>
             <Label htmlFor="password" className="mb-2 inline-block">
               Şifre
             </Label>
-            <Input
+            <input
               id="password"
+              name="password"
               type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="h-11"
               required
+              defaultValue="anadolu2026"
+              autoComplete="current-password"
+              className="h-11 w-full rounded-lg border border-input bg-white px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
             />
           </div>
           {error ? (

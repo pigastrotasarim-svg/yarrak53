@@ -7,6 +7,8 @@ const nextConfig: NextConfig = {
     "*.cursor.sh",
     "*.cursorapi.com",
     "*.cloudworkstations.dev",
+    "*.trycloudflare.com",
+    "*.loca.lt",
   ],
 };
 

@@ -1,5 +1,5 @@
 import { SignJWT, jwtVerify } from "jose";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import bcrypt from "bcryptjs";
 
@@ -18,6 +18,13 @@ export async function verifyPassword(password: string, hash: string) {
   return bcrypt.compare(password, hash);
 }
 
+async function isHttpsRequest() {
+  const h = await headers();
+  const proto = h.get("x-forwarded-proto") || h.get("x-forwarded-protocol");
+  if (proto) return proto.split(",")[0]?.trim() === "https";
+  return process.env.NODE_ENV === "production";
+}
+
 export async function createAdminSession(username: string) {
   const token = await new SignJWT({ username, role: "admin" })
     .setProtectedHeader({ alg: "HS256" })
@@ -26,10 +33,11 @@ export async function createAdminSession(username: string) {
     .sign(secretKey());
 
   const jar = await cookies();
+  const secure = await isHttpsRequest();
   jar.set(COOKIE_NAME, token, {
     httpOnly: true,
     sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
+    secure,
     path: "/",
     maxAge: 60 * 60 * 24 * 7,
   });
