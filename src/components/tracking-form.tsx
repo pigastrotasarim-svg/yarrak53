@@ -8,27 +8,43 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { FadeIn } from "@/components/motion";
 import { TrackingMapClient } from "@/components/tracking-map-client";
-import { sampleShipments } from "@/lib/site";
 
 type TrackingView = {
   code: string;
+  firstName: string;
+  lastName: string;
   customerName: string;
+  tcKimlik: string;
   gsm: string;
+  receiverName: string | null;
+  receiverGsm: string | null;
   status: string;
   statusLabel: string;
-  origin: { province: string; district: string; lat: number; lng: number };
-  destination: {
+  routeLabel: string;
+  origin: {
     province: string;
     district: string;
+    full: string;
     lat: number;
     lng: number;
   };
+  destination: {
+    province: string;
+    district: string;
+    full: string;
+    lat: number;
+    lng: number;
+  };
+  cargoType: string;
+  cargoWeightKg: number | null;
+  packageCount: number;
+  vehiclePlate: string | null;
   distanceKm: number;
   remainingKm: number;
   etaHours: number;
   progress: number;
   position: { lat: number; lng: number };
-  estimatedAt: string | null;
+  notes: string | null;
   events: {
     title: string;
     location: string;
@@ -61,19 +77,7 @@ export function TrackingForm() {
         setLoading(false);
         return;
       }
-
-      // Demo fallback for old sample codes if DB empty
-      const demo = sampleShipments[submitted];
-      if (demo) {
-        setTracking(null);
-        setError("");
-        setLoading(false);
-        setDemo(demo);
-        return;
-      }
-
       setTracking(null);
-      setDemo(null);
       setError("Kayıt bulunamadı");
       setLoading(false);
     }
@@ -86,20 +90,12 @@ export function TrackingForm() {
     };
   }, [submitted]);
 
-  const [demo, setDemo] = useState<(typeof sampleShipments)[string] | null>(
-    null
-  );
-
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setSubmitted(query.trim().toUpperCase());
-    setDemo(null);
   }
 
-  const livePosition = useMemo(() => {
-    if (!tracking) return null;
-    return tracking.position;
-  }, [tracking]);
+  const livePosition = useMemo(() => tracking?.position ?? null, [tracking]);
 
   return (
     <div className="mx-auto max-w-5xl">
@@ -117,8 +113,8 @@ export function TrackingForm() {
                 Sevkiyat Takibi
               </h2>
               <p className="mt-1 text-sm text-slate-ink/70">
-                Takip numaranızı girin; Türkiye haritasında kamyon konumunu ve
-                güzergâhı görün.
+                Takip numaranızla gönderici, TC, GSM, güzergâh ve harita
+                konumunu görün.
               </p>
             </div>
           </div>
@@ -148,7 +144,7 @@ export function TrackingForm() {
 
       {submitted ? (
         <FadeIn delay={0.08} className="mt-8">
-          {loading && !tracking && !demo ? (
+          {loading && !tracking ? (
             <div className="rounded-2xl border border-navy/10 bg-white px-6 py-10 text-center text-sm text-slate-ink/60">
               Sorgulanıyor…
             </div>
@@ -172,14 +168,26 @@ export function TrackingForm() {
                   </div>
                 </div>
 
-                <div className="grid gap-4 border-b border-navy/10 px-6 py-5 sm:grid-cols-2 lg:grid-cols-4">
+                <div className="grid gap-4 border-b border-navy/10 px-6 py-5 sm:grid-cols-2 lg:grid-cols-3">
+                  <Meta label="Ad Soyad" value={tracking.customerName} />
+                  <Meta label="TC Kimlik" value={tracking.tcKimlik} />
+                  <Meta label="GSM" value={tracking.gsm} />
                   <Meta
-                    label="Çıkış"
-                    value={`${tracking.origin.district}, ${tracking.origin.province}`}
+                    label="Alıcı"
+                    value={
+                      tracking.receiverName
+                        ? `${tracking.receiverName}${tracking.receiverGsm ? ` · ${tracking.receiverGsm}` : ""}`
+                        : "—"
+                    }
+                  />
+                  <Meta label="Güzergâh" value={tracking.routeLabel} />
+                  <Meta
+                    label="Yük"
+                    value={`${tracking.cargoType}${tracking.cargoWeightKg ? ` · ${tracking.cargoWeightKg} kg` : ""} · ${tracking.packageCount} parça`}
                   />
                   <Meta
-                    label="Varış"
-                    value={`${tracking.destination.district}, ${tracking.destination.province}`}
+                    label="Plaka"
+                    value={tracking.vehiclePlate || "—"}
                   />
                   <Meta label="Mesafe" value={`${tracking.distanceKm} km`} />
                   <Meta
@@ -188,17 +196,44 @@ export function TrackingForm() {
                   />
                 </div>
 
+                <div className="grid gap-4 border-b border-navy/10 px-6 py-5 sm:grid-cols-2">
+                  <div>
+                    <p className="text-xs uppercase tracking-[0.2em] text-slate-ink/45">
+                      Çıkış adresi
+                    </p>
+                    <p className="mt-1 text-sm font-medium text-navy">
+                      {tracking.origin.full}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-xs uppercase tracking-[0.2em] text-slate-ink/45">
+                      Teslimat adresi
+                    </p>
+                    <p className="mt-1 text-sm font-medium text-navy">
+                      {tracking.destination.full}
+                    </p>
+                  </div>
+                  {tracking.notes ? (
+                    <div className="sm:col-span-2">
+                      <p className="text-xs uppercase tracking-[0.2em] text-slate-ink/45">
+                        Not
+                      </p>
+                      <p className="mt-1 text-sm text-navy">{tracking.notes}</p>
+                    </div>
+                  ) : null}
+                </div>
+
                 <div className="px-4 py-4 sm:px-6">
                   <TrackingMapClient
                     origin={{
                       lat: tracking.origin.lat,
                       lng: tracking.origin.lng,
-                      label: `${tracking.origin.province}`,
+                      label: tracking.origin.province,
                     }}
                     destination={{
                       lat: tracking.destination.lat,
                       lng: tracking.destination.lng,
-                      label: `${tracking.destination.province}`,
+                      label: tracking.destination.province,
                     }}
                     position={livePosition}
                     progress={tracking.progress}
@@ -208,12 +243,13 @@ export function TrackingForm() {
                   <div className="mt-3 h-2 overflow-hidden rounded-full bg-navy/10">
                     <div
                       className="h-full rounded-full bg-amber transition-all duration-700"
-                      style={{ width: `${Math.round(tracking.progress * 100)}%` }}
+                      style={{
+                        width: `${Math.round(tracking.progress * 100)}%`,
+                      }}
                     />
                   </div>
                   <p className="mt-2 text-xs text-slate-ink/55">
-                    İstikamet: {tracking.origin.province} →{" "}
-                    {tracking.destination.province} · İlerleme %
+                    İstikamet: {tracking.routeLabel} · İlerleme %
                     {Math.round(tracking.progress * 100)}
                   </p>
                 </div>
@@ -249,26 +285,7 @@ export function TrackingForm() {
             </div>
           ) : null}
 
-          {!tracking && demo ? (
-            <div className="overflow-hidden rounded-2xl border border-navy/10 bg-white">
-              <div className="bg-navy px-6 py-5 text-white">
-                <p className="font-display text-2xl">{demo.code}</p>
-                <p className="text-sm text-white/70">Demo kayıt · {demo.status}</p>
-              </div>
-              <ol className="space-y-4 px-6 py-6">
-                {demo.events.map((event) => (
-                  <li key={`${event.date}-${event.time}`}>
-                    <p className="font-semibold text-navy">{event.status}</p>
-                    <p className="text-sm text-slate-ink/65">
-                      {event.location} · {event.date} {event.time}
-                    </p>
-                  </li>
-                ))}
-              </ol>
-            </div>
-          ) : null}
-
-          {error && !tracking && !demo ? (
+          {error && !tracking ? (
             <div className="rounded-2xl border border-dashed border-navy/20 bg-white/70 px-6 py-10 text-center">
               <p className="font-display text-xl text-navy">Kayıt bulunamadı</p>
               <p className="mt-2 text-sm text-slate-ink/65">

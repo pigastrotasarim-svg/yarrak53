@@ -39,6 +39,14 @@ export function AdminNav({ username }: { username: string }) {
             Yeni takip
           </Button>
           <Button
+            render={<Link href="/admin/ayarlar" />}
+            nativeButton={false}
+            variant="outline"
+            className="border-white/20 bg-transparent text-white hover:bg-white/10"
+          >
+            GSM / İletişim
+          </Button>
+          <Button
             type="button"
             variant="ghost"
             className="text-white hover:bg-white/10"

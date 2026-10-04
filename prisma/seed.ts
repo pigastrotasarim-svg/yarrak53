@@ -14,7 +14,21 @@ async function main() {
     create: { username, passwordHash },
   });
 
+  await prisma.siteSettings.upsert({
+    where: { id: 1 },
+    update: {},
+    create: {
+      id: 1,
+      phone1: "+90 242 255 06 98",
+      phone2: "+90 242 255 06 98",
+      email: "info@anadolulojistik.com",
+      addressLine1: "Aşağıpazar Mahallesi 606 Sokak No: 5",
+      addressLine2: "Korkuteli / Antalya",
+    },
+  });
+
   console.log(`Admin hazır: ${username} / ${password}`);
+  console.log("Site ayarları hazır");
 }
 
 main()

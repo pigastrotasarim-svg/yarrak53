@@ -2,27 +2,59 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { AddressBlock, type AddressFields } from "@/components/address-block";
 import { TrackingMapClient } from "@/components/tracking-map-client";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { SHIPMENT_STATUSES, statusLabel } from "@/lib/tracking";
 
 type View = {
   code: string;
+  firstName: string;
+  lastName: string;
   customerName: string;
+  tcKimlik: string;
   gsm: string;
+  receiverName: string | null;
+  receiverGsm: string | null;
   status: string;
   statusLabel: string;
-  origin: { province: string; district: string; lat: number; lng: number };
-  destination: {
+  routeLabel: string;
+  origin: {
     province: string;
     district: string;
+    mahalle: string;
+    street: string;
+    buildingNo: string;
+    floor: string;
+    apartment: string;
+    full: string;
     lat: number;
     lng: number;
   };
+  destination: {
+    province: string;
+    district: string;
+    mahalle: string;
+    street: string;
+    buildingNo: string;
+    floor: string;
+    apartment: string;
+    full: string;
+    lat: number;
+    lng: number;
+  };
+  cargoType: string;
+  cargoWeightKg: number | null;
+  packageCount: number;
+  vehiclePlate: string | null;
   distanceKm: number;
   remainingKm: number;
   progress: number;
   position: { lat: number; lng: number };
+  notes: string | null;
   events: {
     title: string;
     location: string;
@@ -35,6 +67,54 @@ export default function AdminShipmentDetailPage({ id }: { id: string }) {
   const [view, setView] = useState<View | null>(null);
   const [error, setError] = useState("");
   const [updating, setUpdating] = useState(false);
+  const [saving, setSaving] = useState(false);
+
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [tcKimlik, setTcKimlik] = useState("");
+  const [gsm, setGsm] = useState("");
+  const [receiverName, setReceiverName] = useState("");
+  const [receiverGsm, setReceiverGsm] = useState("");
+  const [origin, setOrigin] = useState<AddressFields | null>(null);
+  const [dest, setDest] = useState<AddressFields | null>(null);
+  const [cargoType, setCargoType] = useState("Genel kargo");
+  const [cargoWeightKg, setCargoWeightKg] = useState("");
+  const [packageCount, setPackageCount] = useState("1");
+  const [vehiclePlate, setVehiclePlate] = useState("");
+  const [notes, setNotes] = useState("");
+
+  function applyView(v: View) {
+    setView(v);
+    setFirstName(v.firstName);
+    setLastName(v.lastName);
+    setTcKimlik(v.tcKimlik);
+    setGsm(v.gsm);
+    setReceiverName(v.receiverName || "");
+    setReceiverGsm(v.receiverGsm || "");
+    setOrigin({
+      province: v.origin.province,
+      district: v.origin.district,
+      mahalle: v.origin.mahalle,
+      street: v.origin.street,
+      buildingNo: v.origin.buildingNo,
+      floor: v.origin.floor,
+      apartment: v.origin.apartment,
+    });
+    setDest({
+      province: v.destination.province,
+      district: v.destination.district,
+      mahalle: v.destination.mahalle,
+      street: v.destination.street,
+      buildingNo: v.destination.buildingNo,
+      floor: v.destination.floor,
+      apartment: v.destination.apartment,
+    });
+    setCargoType(v.cargoType);
+    setCargoWeightKg(v.cargoWeightKg != null ? String(v.cargoWeightKg) : "");
+    setPackageCount(String(v.packageCount));
+    setVehiclePlate(v.vehiclePlate || "");
+    setNotes(v.notes || "");
+  }
 
   async function load() {
     const res = await fetch(`/api/admin/shipments/${id}`);
@@ -43,12 +123,12 @@ export default function AdminShipmentDetailPage({ id }: { id: string }) {
       setError(data.error || "Yüklenemedi");
       return;
     }
-    setView(data.view);
+    applyView(data.view);
   }
 
   useEffect(() => {
     load();
-    const t = setInterval(load, 10000);
+    const t = setInterval(load, 15000);
     return () => clearInterval(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
@@ -66,7 +146,54 @@ export default function AdminShipmentDetailPage({ id }: { id: string }) {
       setError(data.error || "Güncellenemedi");
       return;
     }
-    setView(data.view);
+    applyView(data.view);
+  }
+
+  async function saveDetails(e: React.FormEvent) {
+    e.preventDefault();
+    if (!origin || !dest) return;
+    setSaving(true);
+    setError("");
+    const res = await fetch(`/api/admin/shipments/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        details: {
+          firstName,
+          lastName,
+          tcKimlik,
+          gsm,
+          receiverName: receiverName || null,
+          receiverGsm: receiverGsm || null,
+          originProvince: origin.province,
+          originDistrict: origin.district,
+          originMahalle: origin.mahalle,
+          originStreet: origin.street,
+          originBuildingNo: origin.buildingNo,
+          originFloor: origin.floor,
+          originApartment: origin.apartment,
+          destProvince: dest.province,
+          destDistrict: dest.district,
+          destMahalle: dest.mahalle,
+          destStreet: dest.street,
+          destBuildingNo: dest.buildingNo,
+          destFloor: dest.floor,
+          destApartment: dest.apartment,
+          cargoType,
+          cargoWeightKg: cargoWeightKg ? Number(cargoWeightKg) : null,
+          packageCount: Number(packageCount) || 1,
+          vehiclePlate: vehiclePlate || null,
+          notes,
+        },
+      }),
+    });
+    const data = await res.json().catch(() => ({}));
+    setSaving(false);
+    if (!res.ok) {
+      setError(data.error || "Kaydedilemedi");
+      return;
+    }
+    applyView(data.view);
   }
 
   if (error && !view) {
@@ -77,7 +204,7 @@ export default function AdminShipmentDetailPage({ id }: { id: string }) {
     );
   }
 
-  if (!view) {
+  if (!view || !origin || !dest) {
     return (
       <main className="mx-auto max-w-4xl px-4 py-10 text-sm text-slate-ink/60">
         Sevkiyat yükleniyor…
@@ -96,12 +223,10 @@ export default function AdminShipmentDetailPage({ id }: { id: string }) {
             {view.code}
           </h1>
           <p className="mt-2 text-sm text-slate-ink/70">
-            {view.customerName} · {view.gsm}
+            {view.customerName} · TC {view.tcKimlik} · {view.gsm}
           </p>
           <p className="mt-1 text-sm text-navy">
-            {view.origin.district}, {view.origin.province} →{" "}
-            {view.destination.district}, {view.destination.province} ·{" "}
-            {view.distanceKm} km
+            {view.routeLabel} · {view.distanceKm} km
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -127,12 +252,12 @@ export default function AdminShipmentDetailPage({ id }: { id: string }) {
           origin={{
             lat: view.origin.lat,
             lng: view.origin.lng,
-            label: `${view.origin.province} / ${view.origin.district}`,
+            label: view.origin.full,
           }}
           destination={{
             lat: view.destination.lat,
             lng: view.destination.lng,
-            label: `${view.destination.province} / ${view.destination.district}`,
+            label: view.destination.full,
           }}
           position={view.position}
           progress={view.progress}
@@ -167,14 +292,50 @@ export default function AdminShipmentDetailPage({ id }: { id: string }) {
         </div>
       </div>
 
+      <form
+        onSubmit={saveDetails}
+        className="mt-8 space-y-6 rounded-2xl border border-navy/10 bg-white p-6"
+      >
+        <h2 className="font-display text-xl text-navy">
+          Nakliyat bilgilerini düzenle
+        </h2>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Field label="Ad" value={firstName} onChange={setFirstName} />
+          <Field label="Soyad" value={lastName} onChange={setLastName} />
+          <Field label="TC Kimlik" value={tcKimlik} onChange={setTcKimlik} />
+          <Field label="GSM" value={gsm} onChange={setGsm} />
+          <Field label="Alıcı adı" value={receiverName} onChange={setReceiverName} />
+          <Field label="Alıcı GSM" value={receiverGsm} onChange={setReceiverGsm} />
+          <Field label="Yük cinsi" value={cargoType} onChange={setCargoType} />
+          <Field label="Ağırlık (kg)" value={cargoWeightKg} onChange={setCargoWeightKg} />
+          <Field label="Paket adedi" value={packageCount} onChange={setPackageCount} />
+          <Field label="Plaka" value={vehiclePlate} onChange={setVehiclePlate} />
+        </div>
+
+        <AddressBlock title="Çıkış adresi" idPrefix="edit-origin" value={origin} onChange={setOrigin} />
+        <AddressBlock title="Teslimat adresi" idPrefix="edit-dest" value={dest} onChange={setDest} />
+
+        <div>
+          <Label className="mb-2 inline-block">Not</Label>
+          <Textarea rows={3} value={notes} onChange={(e) => setNotes(e.target.value)} />
+        </div>
+
+        {error ? <p className="text-sm text-red-600">{error}</p> : null}
+
+        <Button
+          type="submit"
+          disabled={saving}
+          className="bg-amber text-navy hover:bg-amber-light"
+        >
+          {saving ? "Kaydediliyor…" : "Bilgileri kaydet"}
+        </Button>
+      </form>
+
       <div className="mt-8 rounded-2xl border border-navy/10 bg-white p-5">
         <h2 className="font-display text-xl text-navy">Hareket geçmişi</h2>
         <ol className="mt-4 space-y-4">
           {view.events.map((e, i) => (
-            <li
-              key={`${e.createdAt}-${i}`}
-              className="border-l-2 border-amber pl-4"
-            >
+            <li key={`${e.createdAt}-${i}`} className="border-l-2 border-amber pl-4">
               <p className="font-semibold text-navy">{e.title}</p>
               <p className="text-sm text-slate-ink/65">
                 {e.location} · {new Date(e.createdAt).toLocaleString("tr-TR")}
@@ -187,5 +348,22 @@ export default function AdminShipmentDetailPage({ id }: { id: string }) {
         </ol>
       </div>
     </main>
+  );
+}
+
+function Field({
+  label,
+  value,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+}) {
+  return (
+    <div>
+      <Label className="mb-2 inline-block">{label}</Label>
+      <Input className="h-11" value={value} onChange={(e) => onChange(e.target.value)} />
+    </div>
   );
 }

@@ -1,9 +1,37 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { Mail, MapPin, Phone } from "lucide-react";
-import { corporatePages, services, site } from "@/lib/site";
+import { corporatePages, services, site as fallback } from "@/lib/site";
+import type { PublicSiteContact } from "@/lib/site-settings";
 
 export function Footer() {
+  const [site, setSite] = useState<PublicSiteContact>({
+    name: fallback.name,
+    tagline: fallback.tagline,
+    phone: fallback.phone,
+    phone2: fallback.phone,
+    phoneHref: fallback.phoneHref,
+    phone2Href: fallback.phoneHref,
+    email: fallback.email,
+    emailHref: fallback.emailHref,
+    address: {
+      lines: [fallback.address.lines[0], fallback.address.lines[1]],
+    },
+    copyrightYear: fallback.copyrightYear,
+  });
+
+  useEffect(() => {
+    fetch("/api/site-contact")
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.site) setSite(d.site);
+      })
+      .catch(() => undefined);
+  }, []);
+
   return (
     <footer className="relative overflow-hidden bg-navy text-white">
       <div
@@ -54,6 +82,12 @@ export function Footer() {
               <Phone className="size-4 shrink-0 text-amber" />
               <a href={site.phoneHref} className="hover:text-white">
                 {site.phone}
+              </a>
+            </li>
+            <li className="flex items-center gap-3">
+              <Phone className="size-4 shrink-0 text-amber" />
+              <a href={site.phone2Href} className="hover:text-white">
+                {site.phone2}
               </a>
             </li>
             <li className="flex items-center gap-3">

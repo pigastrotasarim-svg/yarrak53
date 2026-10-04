@@ -14,28 +14,59 @@ model AdminUser {
   createdAt    DateTime @default(now())
 }
 
+model SiteSettings {
+  id           Int      @id @default(1)
+  phone1       String   @default("+90 242 255 06 98")
+  phone2       String   @default("+90 242 255 06 98")
+  email        String   @default("info@anadolulojistik.com")
+  addressLine1 String   @default("Aşağıpazar Mahallesi 606 Sokak No: 5")
+  addressLine2 String   @default("Korkuteli / Antalya")
+  updatedAt    DateTime @updatedAt
+}
+
 model Shipment {
-  id             String           @id @default(cuid())
-  code           String           @unique
-  customerName   String
-  gsm            String
-  originProvince String
-  originDistrict String
-  originLat      Float
-  originLng      Float
-  destProvince   String
-  destDistrict   String
-  destLat        Float
-  destLng        Float
-  distanceKm     Float
-  status         String           @default("YuklemeYapildi")
-  notes          String?
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @updatedAt
-  departedAt     DateTime?
-  estimatedAt    DateTime?
-  deliveredAt    DateTime?
-  events         TrackingEvent[]
+  id               String   @id @default(cuid())
+  code             String   @unique
+  firstName        String
+  lastName         String
+  customerName     String
+  tcKimlik         String
+  gsm              String
+  receiverName     String?
+  receiverGsm      String?
+  originProvince   String
+  originDistrict   String
+  originMahalle    String   @default("")
+  originStreet     String   @default("")
+  originBuildingNo String   @default("")
+  originFloor      String   @default("")
+  originApartment  String   @default("")
+  originAddress    String   @default("")
+  originLat        Float
+  originLng        Float
+  destProvince     String
+  destDistrict     String
+  destMahalle      String   @default("")
+  destStreet       String   @default("")
+  destBuildingNo   String   @default("")
+  destFloor        String   @default("")
+  destApartment    String   @default("")
+  destAddress      String   @default("")
+  destLat          Float
+  destLng          Float
+  distanceKm       Float
+  cargoType        String   @default("Genel kargo")
+  cargoWeightKg    Float?
+  packageCount     Int      @default(1)
+  vehiclePlate     String?
+  status           String   @default("YuklemeYapildi")
+  notes            String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  departedAt       DateTime?
+  estimatedAt      DateTime?
+  deliveredAt      DateTime?
+  events           TrackingEvent[]
 }
 
 model TrackingEvent {

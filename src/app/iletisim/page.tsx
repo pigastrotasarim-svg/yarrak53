@@ -4,7 +4,7 @@ import { ArrowRight, Mail, MapPin, Phone } from "lucide-react";
 import { ContactForm } from "@/components/contact-form";
 import { FadeIn } from "@/components/motion";
 import { PageHero } from "@/components/page-hero";
-import { site } from "@/lib/site";
+import { getPublicSiteContact } from "@/lib/site-settings";
 
 export const metadata: Metadata = {
   title: "İletişim",
@@ -12,7 +12,9 @@ export const metadata: Metadata = {
     "Anadolu Lojistik iletişim bilgileri. Korkuteli / Antalya ofisimize ulaşın.",
 };
 
-export default function ContactPage() {
+export default async function ContactPage() {
+  const site = await getPublicSiteContact();
+
   return (
     <main className="flex-1">
       <PageHero
@@ -54,7 +56,7 @@ export default function ContactPage() {
               </span>
               <div>
                 <p className="text-xs uppercase tracking-[0.2em] text-slate-ink/45">
-                  Telefon
+                  Telefon / GSM
                 </p>
                 <a
                   href={site.phoneHref}
@@ -63,10 +65,10 @@ export default function ContactPage() {
                   {site.phone}
                 </a>
                 <a
-                  href={site.phoneHref}
+                  href={site.phone2Href}
                   className="block text-navy hover:text-amber-deep"
                 >
-                  {site.phone}
+                  {site.phone2}
                 </a>
               </div>
             </li>

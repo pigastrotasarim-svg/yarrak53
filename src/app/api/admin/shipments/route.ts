@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { z } from "zod";
 import { getAdminSession } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { findProvinceByName, getDistricts, getProvinces } from "@/lib/turkey";
@@ -9,16 +8,10 @@ import {
   type ShipmentStatusKey,
 } from "@/lib/tracking";
 import { distanceBetween, estimateDelivery } from "@/lib/shipment-view";
-
-const createSchema = z.object({
-  customerName: z.string().min(2),
-  gsm: z.string().min(10),
-  originProvince: z.string().min(2),
-  originDistrict: z.string().min(1),
-  destProvince: z.string().min(2),
-  destDistrict: z.string().min(1),
-  notes: z.string().optional(),
-});
+import {
+  buildFullAddress,
+  shipmentInputSchema,
+} from "@/lib/shipment-schema";
 
 async function unauthorized() {
   return NextResponse.json({ error: "Yetkisiz" }, { status: 401 });
@@ -46,7 +39,7 @@ export async function POST(req: Request) {
   if (!session) return unauthorized();
 
   const body = await req.json().catch(() => null);
-  const parsed = createSchema.safeParse(body);
+  const parsed = shipmentInputSchema.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json(
       { error: "Eksik veya hatalı alanlar", details: parsed.error.flatten() },
@@ -64,7 +57,6 @@ export async function POST(req: Request) {
     );
   }
 
-  // Validate districts exist when API has them
   const [originDistricts, destDistricts] = await Promise.all([
     getDistricts(origin.id),
     getDistricts(dest.id),
@@ -100,23 +92,59 @@ export async function POST(req: Request) {
   const distanceKm = distanceBetween(origin, dest);
   const status: ShipmentStatusKey = "YuklemeYapildi";
   const estimatedAt = estimateDelivery(distanceKm);
+  const customerName = `${data.firstName} ${data.lastName}`.trim();
+  const originAddress = buildFullAddress({
+    mahalle: data.originMahalle,
+    street: data.originStreet,
+    buildingNo: data.originBuildingNo,
+    floor: data.originFloor,
+    apartment: data.originApartment,
+  });
+  const destAddress = buildFullAddress({
+    mahalle: data.destMahalle,
+    street: data.destStreet,
+    buildingNo: data.destBuildingNo,
+    floor: data.destFloor,
+    apartment: data.destApartment,
+  });
 
   const shipment = await prisma.shipment.create({
     data: {
       code,
-      customerName: data.customerName,
+      firstName: data.firstName,
+      lastName: data.lastName,
+      customerName,
+      tcKimlik: data.tcKimlik,
       gsm: data.gsm,
+      receiverName: data.receiverName || null,
+      receiverGsm: data.receiverGsm || null,
       originProvince: origin.name,
       originDistrict: data.originDistrict,
+      originMahalle: data.originMahalle || "",
+      originStreet: data.originStreet || "",
+      originBuildingNo: data.originBuildingNo || "",
+      originFloor: data.originFloor || "",
+      originApartment: data.originApartment || "",
+      originAddress,
       originLat: origin.lat,
       originLng: origin.lng,
       destProvince: dest.name,
       destDistrict: data.destDistrict,
+      destMahalle: data.destMahalle || "",
+      destStreet: data.destStreet || "",
+      destBuildingNo: data.destBuildingNo || "",
+      destFloor: data.destFloor || "",
+      destApartment: data.destApartment || "",
+      destAddress,
       destLat: dest.lat,
       destLng: dest.lng,
       distanceKm,
+      cargoType: data.cargoType || "Genel kargo",
+      cargoWeightKg: data.cargoWeightKg ?? null,
+      packageCount: data.packageCount || 1,
+      vehiclePlate: data.vehiclePlate || null,
       status,
-      notes: data.notes,
+      notes: data.notes || null,
       estimatedAt,
       events: {
         create: {
@@ -130,8 +158,6 @@ export async function POST(req: Request) {
     include: { events: true },
   });
 
-  // Warm province list cache path
   await getProvinces();
-
   return NextResponse.json({ shipment }, { status: 201 });
 }

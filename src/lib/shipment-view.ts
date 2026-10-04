@@ -1,4 +1,5 @@
 import { haversineKm, hoursForDistance, interpolateLatLng } from "@/lib/geo";
+import { formatAddress } from "@/lib/site-settings";
 import {
   AVG_TRUCK_KMH,
   SHIPMENT_STATUSES,
@@ -8,17 +9,38 @@ import {
 
 export type ShipmentLike = {
   code: string;
+  firstName: string;
+  lastName: string;
   customerName: string;
+  tcKimlik: string;
   gsm: string;
+  receiverName: string | null;
+  receiverGsm: string | null;
   originProvince: string;
   originDistrict: string;
+  originMahalle: string;
+  originStreet: string;
+  originBuildingNo: string;
+  originFloor: string;
+  originApartment: string;
+  originAddress: string;
   originLat: number;
   originLng: number;
   destProvince: string;
   destDistrict: string;
+  destMahalle: string;
+  destStreet: string;
+  destBuildingNo: string;
+  destFloor: string;
+  destApartment: string;
+  destAddress: string;
   destLat: number;
   destLng: number;
   distanceKm: number;
+  cargoType: string;
+  cargoWeightKg: number | null;
+  packageCount: number;
+  vehiclePlate: string | null;
   status: string;
   notes: string | null;
   createdAt: Date;
@@ -73,24 +95,70 @@ export function buildTrackingPayload(shipment: ShipmentLike) {
   );
   const remainingHours = hoursForDistance(remainingKm, AVG_TRUCK_KMH);
 
+  const originFull = formatAddress({
+    mahalle: shipment.originMahalle,
+    street: shipment.originStreet,
+    buildingNo: shipment.originBuildingNo,
+    floor: shipment.originFloor,
+    apartment: shipment.originApartment,
+    address: shipment.originAddress,
+    district: shipment.originDistrict,
+    province: shipment.originProvince,
+  });
+
+  const destFull = formatAddress({
+    mahalle: shipment.destMahalle,
+    street: shipment.destStreet,
+    buildingNo: shipment.destBuildingNo,
+    floor: shipment.destFloor,
+    apartment: shipment.destApartment,
+    address: shipment.destAddress,
+    district: shipment.destDistrict,
+    province: shipment.destProvince,
+  });
+
   return {
     code: shipment.code,
+    firstName: shipment.firstName,
+    lastName: shipment.lastName,
     customerName: shipment.customerName,
-    gsm: maskGsm(shipment.gsm),
+    tcKimlik: shipment.tcKimlik,
+    gsm: shipment.gsm,
+    receiverName: shipment.receiverName,
+    receiverGsm: shipment.receiverGsm,
     status: shipment.status,
     statusLabel: statusLabel(shipment.status),
+    routeLabel: `${shipment.originProvince} → ${shipment.destProvince}`,
     origin: {
       province: shipment.originProvince,
       district: shipment.originDistrict,
+      mahalle: shipment.originMahalle,
+      street: shipment.originStreet,
+      buildingNo: shipment.originBuildingNo,
+      floor: shipment.originFloor,
+      apartment: shipment.originApartment,
+      address: shipment.originAddress,
+      full: originFull,
       lat: shipment.originLat,
       lng: shipment.originLng,
     },
     destination: {
       province: shipment.destProvince,
       district: shipment.destDistrict,
+      mahalle: shipment.destMahalle,
+      street: shipment.destStreet,
+      buildingNo: shipment.destBuildingNo,
+      floor: shipment.destFloor,
+      apartment: shipment.destApartment,
+      address: shipment.destAddress,
+      full: destFull,
       lat: shipment.destLat,
       lng: shipment.destLng,
     },
+    cargoType: shipment.cargoType,
+    cargoWeightKg: shipment.cargoWeightKg,
+    packageCount: shipment.packageCount,
+    vehiclePlate: shipment.vehiclePlate,
     distanceKm: Math.round(shipment.distanceKm),
     remainingKm,
     etaHours: Number(remainingHours.toFixed(1)),
@@ -113,12 +181,6 @@ export function buildTrackingPayload(shipment: ShipmentLike) {
       label: s.label,
     })),
   };
-}
-
-export function maskGsm(gsm: string) {
-  const digits = gsm.replace(/\D/g, "");
-  if (digits.length < 7) return gsm;
-  return `${digits.slice(0, 3)} *** ** ${digits.slice(-2)}`;
 }
 
 export function estimateDelivery(distanceKm: number, from = new Date()) {
