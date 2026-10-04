@@ -31,6 +31,19 @@ npm run dev -- --port 43123
 4. Durumu güncelleyin: Yükleme yapıldı → Yola çıktı → Yolda → …
 5. Müşteri `/takip` üzerinden kodu sorgular; haritada kamyon istikamet üzerinde ilerler
 
+## Netlify’ye yükleme
+
+Adım adım rehber: [NETLIFY.md](./NETLIFY.md)
+
+Özet:
+1. [Neon](https://neon.tech) ile ücretsiz Postgres oluştur  
+2. `prisma/schema.prisma` → `provider = "postgresql"`  
+3. GitHub’a push → Netlify’den Import  
+4. Env: `DATABASE_URL`, `ADMIN_USERNAME`, `ADMIN_PASSWORD`, `AUTH_SECRET`  
+5. Deploy (`netlify.toml` hazır)
+
+> Netlify’de SQLite kullanılamaz; admin/takip için Postgres şart.
+
 ## Plesk’e kurulum
 
 Next.js + SQLite/Node.js gerekir.
