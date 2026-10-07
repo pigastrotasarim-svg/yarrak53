@@ -27,42 +27,95 @@ export function ProvinceDistrictSelect({
 }: Props) {
   const [provinces, setProvinces] = useState<Province[]>([]);
   const [districts, setDistricts] = useState<District[]>([]);
+  const [loadingProvinces, setLoadingProvinces] = useState(true);
   const [loadingDistricts, setLoadingDistricts] = useState(false);
+  const [provinceError, setProvinceError] = useState("");
+  const [districtError, setDistrictError] = useState("");
 
   useEffect(() => {
-    fetch("/api/provinces")
-      .then((r) => r.json())
-      .then((data) => setProvinces(data.provinces ?? []))
-      .catch(() => setProvinces([]));
+    const ctrl = new AbortController();
+    setLoadingProvinces(true);
+    setProvinceError("");
+    fetch("/api/provinces", { signal: ctrl.signal })
+      .then(async (r) => {
+        if (!r.ok) throw new Error("İller yüklenemedi");
+        return r.json();
+      })
+      .then((data) => {
+        const list = (data.provinces ?? []) as Province[];
+        setProvinces(list);
+        if (list.length === 0) setProvinceError("İl listesi boş");
+      })
+      .catch((err) => {
+        if (err?.name === "AbortError") return;
+        setProvinces([]);
+        setProvinceError("İller yüklenemedi");
+      })
+      .finally(() => {
+        if (!ctrl.signal.aborted) setLoadingProvinces(false);
+      });
+    return () => ctrl.abort();
   }, []);
 
-  const selectedProvince = useMemo(
-    () => provinces.find((p) => p.name === provinceValue) ?? null,
-    [provinces, provinceValue]
-  );
+  const selectedProvince = useMemo(() => {
+    if (!provinceValue) return null;
+    return (
+      provinces.find(
+        (p) =>
+          p.name.toLocaleLowerCase("tr") ===
+          provinceValue.toLocaleLowerCase("tr")
+      ) ?? null
+    );
+  }, [provinces, provinceValue]);
 
   useEffect(() => {
     if (!selectedProvince) {
       setDistricts([]);
+      setLoadingDistricts(false);
+      setDistrictError("");
       return;
     }
-    let cancelled = false;
+
+    const ctrl = new AbortController();
     setLoadingDistricts(true);
-    fetch(`/api/provinces/${selectedProvince.id}/districts`)
-      .then((r) => r.json())
-      .then((data) => {
-        if (!cancelled) setDistricts(data.districts ?? []);
+    setDistrictError("");
+    setDistricts([]);
+
+    fetch(`/api/provinces/${selectedProvince.id}/districts`, {
+      signal: ctrl.signal,
+    })
+      .then(async (r) => {
+        if (!r.ok) throw new Error("İlçeler yüklenemedi");
+        return r.json();
       })
-      .catch(() => {
-        if (!cancelled) setDistricts([]);
+      .then((data) => {
+        const list = (data.districts ?? []) as District[];
+        setDistricts(list);
+        if (list.length === 0) setDistrictError("Bu il için ilçe bulunamadı");
+      })
+      .catch((err) => {
+        if (err?.name === "AbortError") return;
+        setDistricts([]);
+        setDistrictError("İlçeler yüklenemedi");
       })
       .finally(() => {
-        if (!cancelled) setLoadingDistricts(false);
+        if (!ctrl.signal.aborted) setLoadingDistricts(false);
       });
-    return () => {
-      cancelled = true;
-    };
-  }, [selectedProvince]);
+
+    return () => ctrl.abort();
+  }, [selectedProvince?.id]);
+
+  // Keep district value valid after province change / reload
+  useEffect(() => {
+    if (!districtValue || loadingDistricts || districts.length === 0) return;
+    const ok = districts.some(
+      (d) =>
+        d.name.toLocaleLowerCase("tr") === districtValue.toLocaleLowerCase("tr")
+    );
+    if (!ok) onDistrictChange("");
+    // intentionally omit onDistrictChange — parent often passes inline fn
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [districts, districtValue, loadingDistricts]);
 
   return (
     <div className="grid gap-4 sm:grid-cols-2">
@@ -79,14 +132,20 @@ export function ProvinceDistrictSelect({
             onDistrictChange("");
           }}
           required
+          disabled={loadingProvinces}
         >
-          <option value="">İl seçin</option>
+          <option value="">
+            {loadingProvinces ? "İller yükleniyor…" : "İl seçin"}
+          </option>
           {provinces.map((p) => (
             <option key={p.id} value={p.name}>
               {p.name}
             </option>
           ))}
         </select>
+        {provinceError ? (
+          <p className="mt-1 text-xs text-red-600">{provinceError}</p>
+        ) : null}
       </div>
       <div>
         <Label htmlFor={`${idPrefix}-district`} className="mb-2 inline-block">
@@ -98,7 +157,7 @@ export function ProvinceDistrictSelect({
           value={districtValue}
           onChange={(e) => onDistrictChange(e.target.value)}
           required
-          disabled={!provinceValue || loadingDistricts}
+          disabled={!provinceValue || loadingDistricts || loadingProvinces}
         >
           <option value="">
             {loadingDistricts ? "İlçeler yükleniyor…" : "İlçe seçin"}
@@ -109,6 +168,9 @@ export function ProvinceDistrictSelect({
             </option>
           ))}
         </select>
+        {districtError ? (
+          <p className="mt-1 text-xs text-red-600">{districtError}</p>
+        ) : null}
       </div>
     </div>
   );

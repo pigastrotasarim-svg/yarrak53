@@ -68,6 +68,7 @@ export default function AdminShipmentDetailPage({ id }: { id: string }) {
   const [error, setError] = useState("");
   const [updating, setUpdating] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [dirty, setDirty] = useState(false);
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -83,8 +84,9 @@ export default function AdminShipmentDetailPage({ id }: { id: string }) {
   const [vehiclePlate, setVehiclePlate] = useState("");
   const [notes, setNotes] = useState("");
 
-  function applyView(v: View) {
+  function applyView(v: View, opts?: { resetForm?: boolean }) {
     setView(v);
+    if (opts?.resetForm === false) return;
     setFirstName(v.firstName);
     setLastName(v.lastName);
     setTcKimlik(v.tcKimlik);
@@ -114,21 +116,25 @@ export default function AdminShipmentDetailPage({ id }: { id: string }) {
     setPackageCount(String(v.packageCount));
     setVehiclePlate(v.vehiclePlate || "");
     setNotes(v.notes || "");
+    setDirty(false);
   }
 
-  async function load() {
+  async function load(opts?: { resetForm?: boolean }) {
     const res = await fetch(`/api/admin/shipments/${id}`);
     const data = await res.json().catch(() => ({}));
     if (!res.ok) {
       setError(data.error || "Yüklenemedi");
       return;
     }
-    applyView(data.view);
+    applyView(data.view, opts);
   }
 
   useEffect(() => {
-    load();
-    const t = setInterval(load, 15000);
+    load({ resetForm: true });
+    const t = setInterval(() => {
+      // Don't wipe in-progress address / form edits while polling.
+      load({ resetForm: false });
+    }, 15000);
     return () => clearInterval(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
@@ -146,12 +152,16 @@ export default function AdminShipmentDetailPage({ id }: { id: string }) {
       setError(data.error || "Güncellenemedi");
       return;
     }
-    applyView(data.view);
+    applyView(data.view, { resetForm: true });
   }
 
   async function saveDetails(e: React.FormEvent) {
     e.preventDefault();
     if (!origin || !dest) return;
+    if (!origin.province || !origin.district || !dest.province || !dest.district) {
+      setError("Çıkış ve teslimat için il / ilçe seçin");
+      return;
+    }
     setSaving(true);
     setError("");
     const res = await fetch(`/api/admin/shipments/${id}`, {
@@ -193,7 +203,11 @@ export default function AdminShipmentDetailPage({ id }: { id: string }) {
       setError(data.error || "Kaydedilemedi");
       return;
     }
-    applyView(data.view);
+    applyView(data.view, { resetForm: true });
+  }
+
+  function markDirty() {
+    setDirty(true);
   }
 
   if (error && !view) {
@@ -296,28 +310,56 @@ export default function AdminShipmentDetailPage({ id }: { id: string }) {
         onSubmit={saveDetails}
         className="mt-8 space-y-6 rounded-2xl border border-navy/10 bg-white p-6"
       >
-        <h2 className="font-display text-xl text-navy">
-          Nakliyat bilgilerini düzenle
-        </h2>
+        <div className="flex flex-wrap items-end justify-between gap-2">
+          <h2 className="font-display text-xl text-navy">
+            Nakliyat bilgilerini düzenle
+          </h2>
+          {dirty ? (
+            <p className="text-xs text-amber-deep">Kaydedilmemiş değişiklikler var</p>
+          ) : null}
+        </div>
         <div className="grid gap-4 sm:grid-cols-2">
-          <Field label="Ad" value={firstName} onChange={setFirstName} />
-          <Field label="Soyad" value={lastName} onChange={setLastName} />
-          <Field label="TC Kimlik" value={tcKimlik} onChange={setTcKimlik} />
-          <Field label="GSM" value={gsm} onChange={setGsm} />
-          <Field label="Alıcı adı" value={receiverName} onChange={setReceiverName} />
-          <Field label="Alıcı GSM" value={receiverGsm} onChange={setReceiverGsm} />
-          <Field label="Yük cinsi" value={cargoType} onChange={setCargoType} />
-          <Field label="Ağırlık (kg)" value={cargoWeightKg} onChange={setCargoWeightKg} />
-          <Field label="Paket adedi" value={packageCount} onChange={setPackageCount} />
-          <Field label="Plaka" value={vehiclePlate} onChange={setVehiclePlate} />
+          <Field label="Ad" value={firstName} onChange={(v) => { markDirty(); setFirstName(v); }} />
+          <Field label="Soyad" value={lastName} onChange={(v) => { markDirty(); setLastName(v); }} />
+          <Field label="TC Kimlik" value={tcKimlik} onChange={(v) => { markDirty(); setTcKimlik(v); }} />
+          <Field label="GSM" value={gsm} onChange={(v) => { markDirty(); setGsm(v); }} />
+          <Field label="Alıcı adı" value={receiverName} onChange={(v) => { markDirty(); setReceiverName(v); }} />
+          <Field label="Alıcı GSM" value={receiverGsm} onChange={(v) => { markDirty(); setReceiverGsm(v); }} />
+          <Field label="Yük cinsi" value={cargoType} onChange={(v) => { markDirty(); setCargoType(v); }} />
+          <Field label="Ağırlık (kg)" value={cargoWeightKg} onChange={(v) => { markDirty(); setCargoWeightKg(v); }} />
+          <Field label="Paket adedi" value={packageCount} onChange={(v) => { markDirty(); setPackageCount(v); }} />
+          <Field label="Plaka" value={vehiclePlate} onChange={(v) => { markDirty(); setVehiclePlate(v); }} />
         </div>
 
-        <AddressBlock title="Çıkış adresi" idPrefix="edit-origin" value={origin} onChange={setOrigin} />
-        <AddressBlock title="Teslimat adresi" idPrefix="edit-dest" value={dest} onChange={setDest} />
+        <AddressBlock
+          title="Çıkış adresi"
+          idPrefix="edit-origin"
+          value={origin}
+          onChange={(next) => {
+            markDirty();
+            setOrigin(next);
+          }}
+        />
+        <AddressBlock
+          title="Teslimat adresi"
+          idPrefix="edit-dest"
+          value={dest}
+          onChange={(next) => {
+            markDirty();
+            setDest(next);
+          }}
+        />
 
         <div>
           <Label className="mb-2 inline-block">Not</Label>
-          <Textarea rows={3} value={notes} onChange={(e) => setNotes(e.target.value)} />
+          <Textarea
+            rows={3}
+            value={notes}
+            onChange={(e) => {
+              markDirty();
+              setNotes(e.target.value);
+            }}
+          />
         </div>
 
         {error ? <p className="text-sm text-red-600">{error}</p> : null}

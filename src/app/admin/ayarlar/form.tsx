@@ -46,10 +46,18 @@ export default function SettingsForm() {
         addressLine2,
       }),
     });
+    const data = await res.json().catch(() => ({}));
     setLoading(false);
     if (!res.ok) {
-      setError("Kaydedilemedi");
+      setError(data.error || "Kaydedilemedi");
       return;
+    }
+    if (data.settings) {
+      setPhone1(data.settings.phone1);
+      setPhone2(data.settings.phone2);
+      setEmail(data.settings.email);
+      setAddressLine1(data.settings.addressLine1);
+      setAddressLine2(data.settings.addressLine2);
     }
     setMsg("Site iletişim bilgileri güncellendi. Footer ve iletişim sayfası bu numaraları kullanır.");
   }
