@@ -111,20 +111,28 @@ export default function NewShipmentForm() {
             TC, ad soyad, GSM, güzergâh ve açık adres ile sevkiyat oluşturun.
           </p>
         </div>
-        <Button
+        <button
           type="button"
-          variant="outline"
-          className="border-navy/20"
+          className="inline-flex h-10 items-center rounded-lg border border-navy/20 bg-white px-4 text-sm font-medium text-navy hover:bg-mist"
           onClick={fillRandomPerson}
         >
           Rastgele kişi
-        </Button>
+        </button>
       </div>
 
       <form
         onSubmit={onSubmit}
         className="mt-8 space-y-6 rounded-2xl border border-navy/10 bg-white p-6 sm:p-8"
       >
+        <div className="flex justify-end sm:hidden">
+          <button
+            type="button"
+            className="inline-flex h-10 items-center rounded-lg border border-navy/20 bg-white px-4 text-sm font-medium text-navy hover:bg-mist"
+            onClick={fillRandomPerson}
+          >
+            Rastgele kişi
+          </button>
+        </div>
         <div className="grid gap-4 sm:grid-cols-2">
           <Field label="Ad" id="first" value={firstName} onChange={setFirstName} required />
           <Field label="Soyad" id="last" value={lastName} onChange={setLastName} required />

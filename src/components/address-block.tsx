@@ -44,14 +44,13 @@ export function AddressBlock({ title, idPrefix, value, onChange }: Props) {
     <div className="space-y-4 rounded-xl border border-navy/10 bg-mist/50 p-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <p className="text-sm font-semibold text-navy">{title}</p>
-        <Button
+        <button
           type="button"
-          variant="outline"
-          className="border-navy/20"
+          className="inline-flex h-9 items-center rounded-lg border border-navy/20 bg-white px-3 text-sm font-medium text-navy hover:bg-white/80"
           onClick={fillRandom}
         >
           Rastgele adres
-        </Button>
+        </button>
       </div>
 
       <ProvinceDistrictSelect
