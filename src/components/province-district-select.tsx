@@ -128,8 +128,10 @@ export function ProvinceDistrictSelect({
           className="h-11 w-full rounded-lg border border-input bg-white px-3 text-sm"
           value={provinceValue}
           onChange={(e) => {
+            // Parent onProvinceChange must clear district itself.
+            // Calling onDistrictChange here races with a stale closure and
+            // overwrites the newly selected province.
             onProvinceChange(e.target.value);
-            onDistrictChange("");
           }}
           required
           disabled={loadingProvinces}
