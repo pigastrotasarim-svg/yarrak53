@@ -24,7 +24,7 @@ export function Footer() {
   });
 
   useEffect(() => {
-    fetch("/api/site-contact")
+    fetch("/api/site-contact", { cache: "no-store" })
       .then((r) => r.json())
       .then((d) => {
         if (d.site) setSite(d.site);

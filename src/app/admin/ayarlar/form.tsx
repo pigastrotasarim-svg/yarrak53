@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
+import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
@@ -16,7 +16,7 @@ export default function SettingsForm() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    fetch("/api/admin/settings")
+    fetch("/api/admin/settings", { cache: "no-store" })
       .then((r) => r.json())
       .then((d) => {
         if (d.settings) {
@@ -39,11 +39,11 @@ export default function SettingsForm() {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        phone1,
-        phone2,
-        email,
-        addressLine1,
-        addressLine2,
+        phone1: phone1.trim(),
+        phone2: phone2.trim(),
+        email: email.trim(),
+        addressLine1: addressLine1.trim(),
+        addressLine2: addressLine2.trim(),
       }),
     });
     const data = await res.json().catch(() => ({}));
@@ -59,7 +59,7 @@ export default function SettingsForm() {
       setAddressLine1(data.settings.addressLine1);
       setAddressLine2(data.settings.addressLine2);
     }
-    setMsg("Site iletişim bilgileri güncellendi. Footer ve iletişim sayfası bu numaraları kullanır.");
+    setMsg("Kaydedildi. İletişim sayfası ve footer güncellendi.");
   }
 
   return (
@@ -68,7 +68,11 @@ export default function SettingsForm() {
         Site iletişim / GSM
       </h1>
       <p className="mt-2 text-sm text-slate-ink/65">
-        Sitede görünen tüm telefon ve adres bilgilerini buradan değiştirirsiniz.
+        Buradaki bilgiler{" "}
+        <Link href="/iletisim" className="font-semibold text-amber-deep underline">
+          /iletisim
+        </Link>{" "}
+        sayfasında ve sitedeki footer’da görünür.
       </p>
 
       <form
@@ -77,20 +81,27 @@ export default function SettingsForm() {
       >
         <Field label="GSM / Telefon 1" value={phone1} onChange={setPhone1} />
         <Field label="GSM / Telefon 2" value={phone2} onChange={setPhone2} />
-        <Field label="E-posta" value={email} onChange={setEmail} />
+        <Field label="E-posta" value={email} onChange={setEmail} type="email" />
         <Field label="Adres satır 1" value={addressLine1} onChange={setAddressLine1} />
         <Field label="Adres satır 2" value={addressLine2} onChange={setAddressLine2} />
 
         {error ? <p className="text-sm text-red-600">{error}</p> : null}
-        {msg ? <p className="text-sm text-navy">{msg}</p> : null}
+        {msg ? (
+          <p className="text-sm text-navy">
+            {msg}{" "}
+            <Link href="/iletisim" className="font-semibold text-amber-deep underline">
+              İletişim sayfasını aç
+            </Link>
+          </p>
+        ) : null}
 
-        <Button
+        <button
           type="submit"
           disabled={loading}
-          className="bg-amber text-navy hover:bg-amber-light"
+          className="inline-flex h-11 items-center rounded-lg bg-amber px-5 text-sm font-semibold text-navy hover:bg-amber-light disabled:opacity-50"
         >
           {loading ? "Kaydediliyor…" : "Kaydet"}
-        </Button>
+        </button>
       </form>
     </main>
   );
@@ -100,15 +111,18 @@ function Field({
   label,
   value,
   onChange,
+  type = "text",
 }: {
   label: string;
   value: string;
   onChange: (v: string) => void;
+  type?: string;
 }) {
   return (
     <div>
       <Label className="mb-2 inline-block">{label}</Label>
       <Input
+        type={type}
         className="h-11"
         value={value}
         onChange={(e) => onChange(e.target.value)}

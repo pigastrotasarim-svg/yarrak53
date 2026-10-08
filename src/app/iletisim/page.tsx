@@ -1,10 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, Mail, MapPin, Phone } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { ContactForm } from "@/components/contact-form";
+import { ContactInfo } from "@/components/contact-info";
 import { FadeIn } from "@/components/motion";
 import { PageHero } from "@/components/page-hero";
 import { getPublicSiteContact } from "@/lib/site-settings";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export const metadata: Metadata = {
   title: "İletişim",
@@ -30,65 +34,11 @@ export default async function ContactPage() {
             Bize Ulaşın
           </h2>
           <p className="mt-3 text-slate-ink/70">
-            Ofisimiz Antalya Korkuteli’nde. Telefon, e-posta veya form üzerinden
-            talebinizi iletebilirsiniz.
+            Güncel telefon, e-posta ve adres bilgilerimiz aşağıdadır. Form
+            üzerinden de talebinizi iletebilirsiniz.
           </p>
 
-          <ul className="mt-8 space-y-5">
-            <li className="flex gap-3">
-              <span className="mt-0.5 rounded-lg bg-navy p-2 text-amber">
-                <MapPin className="size-4" />
-              </span>
-              <div>
-                <p className="text-xs uppercase tracking-[0.2em] text-slate-ink/45">
-                  Adres
-                </p>
-                <p className="mt-1 text-navy">
-                  {site.address.lines[0]}
-                  <br />
-                  {site.address.lines[1]}
-                </p>
-              </div>
-            </li>
-            <li className="flex gap-3">
-              <span className="mt-0.5 rounded-lg bg-navy p-2 text-amber">
-                <Phone className="size-4" />
-              </span>
-              <div>
-                <p className="text-xs uppercase tracking-[0.2em] text-slate-ink/45">
-                  Telefon / GSM
-                </p>
-                <a
-                  href={site.phoneHref}
-                  className="mt-1 block text-navy hover:text-amber-deep"
-                >
-                  {site.phone}
-                </a>
-                <a
-                  href={site.phone2Href}
-                  className="block text-navy hover:text-amber-deep"
-                >
-                  {site.phone2}
-                </a>
-              </div>
-            </li>
-            <li className="flex gap-3">
-              <span className="mt-0.5 rounded-lg bg-navy p-2 text-amber">
-                <Mail className="size-4" />
-              </span>
-              <div>
-                <p className="text-xs uppercase tracking-[0.2em] text-slate-ink/45">
-                  E-posta
-                </p>
-                <a
-                  href={site.emailHref}
-                  className="mt-1 block text-navy hover:text-amber-deep"
-                >
-                  {site.email}
-                </a>
-              </div>
-            </li>
-          </ul>
+          <ContactInfo initialSite={site} />
 
           <Link
             href="/takip"
