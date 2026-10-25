@@ -6,19 +6,21 @@ const prisma = new PrismaClient();
 async function main() {
   const username = process.env.ADMIN_USERNAME || "admin";
   const password = process.env.ADMIN_PASSWORD || "anadolu2026";
-  const passwordHash = await bcrypt.hash(password, 10);
 
-  await prisma.adminUser.upsert({
-    where: { username },
-    update: { passwordHash },
-    create: { username, passwordHash },
-  });
+  const existing = await prisma.adminUser.findUnique({ where: { username } });
+  if (!existing) {
+    const passwordHash = await bcrypt.hash(password, 10);
+    await prisma.adminUser.create({
+      data: { username, passwordHash },
+    });
+    console.log(`Admin oluşturuldu: ${username}`);
+  } else {
+    console.log(`Admin mevcut: ${username}`);
+  }
 
   await prisma.siteSettings.upsert({
     where: { id: 1 },
-    update: {
-      email: "info@canlojistik.com",
-    },
+    update: {},
     create: {
       id: 1,
       phone1: "+90 242 255 06 98",
@@ -29,7 +31,6 @@ async function main() {
     },
   });
 
-  console.log(`Admin hazır: ${username} / ${password}`);
   console.log("Site ayarları hazır");
 }
 

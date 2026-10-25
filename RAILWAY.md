@@ -35,7 +35,10 @@ Push veya **Deploy** ile build başlar.
 
 `railway.toml` otomatik:
 - build: `prisma generate` + `next build`
-- start: `migrate deploy` + seed + `next start`
+- release: `migrate deploy` + seed (healthcheck’i bloklamaz)
+- start: `next start`
+
+> `DATABASE_URL` boşsa veya Postgres’e erişilemezse release/start `SIGTERM` ile düşer. Web servisinde Postgres `DATABASE_URL` reference’ı olduğundan emin ol.
 
 ## 5) Domain
 
