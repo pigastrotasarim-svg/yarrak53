@@ -46,7 +46,7 @@ export function Header() {
           />
           <div className="leading-tight">
             <span className="block font-display text-xl tracking-[0.04em] text-white sm:text-2xl">
-              ANADOLU
+              CAN
             </span>
             <span className="block text-[0.7rem] font-semibold uppercase tracking-[0.28em] text-amber">
               Lojistik

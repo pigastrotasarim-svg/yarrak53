@@ -53,7 +53,7 @@ export function Footer() {
               className="size-12 rounded-full object-cover ring-1 ring-amber/60"
             />
             <div>
-              <p className="font-display text-2xl tracking-wide">ANADOLU</p>
+              <p className="font-display text-2xl tracking-wide">CAN</p>
               <p className="text-xs uppercase tracking-[0.28em] text-amber">
                 Lojistik
               </p>

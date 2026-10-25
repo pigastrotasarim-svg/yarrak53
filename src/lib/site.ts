@@ -1,10 +1,10 @@
 export const site = {
-  name: "Anadolu Lojistik",
+  name: "Can Lojistik",
   tagline: "Türkiye'nin her köşesine güvenli teslimat",
   phone: "+90 242 255 06 98",
   phoneHref: "tel:+902422550698",
-  email: "info@anadolulojistik.com",
-  emailHref: "mailto:info@anadolulojistik.com",
+  email: "info@canlojistik.com",
+  emailHref: "mailto:info@canlojistik.com",
   address: {
     lines: ["Aşağıpazar Mahallesi 606 Sokak No: 5", "Korkuteli / Antalya"],
   },
@@ -71,7 +71,7 @@ export const corporatePages = [
     slug: "hakkimizda",
     title: "Hakkımızda",
     summary:
-      "Anadolu Lojistik olarak karayolu, proje ve depolama çözümleriyle işletmelerin lojistik yükünü hafifletiyoruz.",
+      "Can Lojistik olarak karayolu, proje ve depolama çözümleriyle işletmelerin lojistik yükünü hafifletiyoruz.",
   },
   {
     slug: "etik-ve-uyum",
@@ -111,8 +111,8 @@ export type TrackingShipment = {
 };
 
 export const sampleShipments: Record<string, TrackingShipment> = {
-  AL2026001847: {
-    code: "AL2026001847",
+  CL2026001847: {
+    code: "CL2026001847",
     status: "Dağıtımda",
     origin: "Korkuteli / Antalya",
     destination: "Keçiören / Ankara",
@@ -145,8 +145,8 @@ export const sampleShipments: Record<string, TrackingShipment> = {
       },
     ],
   },
-  AL2026002291: {
-    code: "AL2026002291",
+  CL2026002291: {
+    code: "CL2026002291",
     status: "Depoda",
     origin: "Gaziemir / İzmir",
     destination: "Korkuteli / Antalya",
@@ -156,7 +156,7 @@ export const sampleShipments: Record<string, TrackingShipment> = {
       {
         date: "2 Ekim 2026",
         time: "11:00",
-        location: "Anadolu Lojistik Depo",
+        location: "Can Lojistik Depo",
         status: "Stok kaydı güncellendi",
       },
       {
@@ -167,8 +167,8 @@ export const sampleShipments: Record<string, TrackingShipment> = {
       },
     ],
   },
-  AL2026003105: {
-    code: "AL2026003105",
+  CL2026003105: {
+    code: "CL2026003105",
     status: "Teslim edildi",
     origin: "Korkuteli / Antalya",
     destination: "Nilüfer / Bursa",

@@ -16,7 +16,7 @@ const content: Record<
 > = {
   hakkimizda: {
     intro:
-      "Anadolu Lojistik, Antalya Korkuteli merkezli bir lojistik firması olarak karayolu taşımacılığı, proje lojistiği ve depolama çözümlerini aynı operasyon disipliniyle sunar.",
+      "Can Lojistik, Antalya Korkuteli merkezli bir lojistik firması olarak karayolu taşımacılığı, proje lojistiği ve depolama çözümlerini aynı operasyon disipliniyle sunar.",
     sections: [
       {
         heading: "Misyonumuz",
@@ -34,7 +34,7 @@ const content: Record<
   },
   "etik-ve-uyum": {
     intro:
-      "Etik ve uyum yönetimi, Anadolu Lojistik’te günlük karar alma süreçlerinin ayrılmaz parçasıdır. Yasalara, sözleşmelere ve dürüst rekabete bağlı kalırız.",
+      "Etik ve uyum yönetimi, Can Lojistik’te günlük karar alma süreçlerinin ayrılmaz parçasıdır. Yasalara, sözleşmelere ve dürüst rekabete bağlı kalırız.",
     sections: [
       {
         heading: "Dürüstlük",

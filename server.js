@@ -14,7 +14,7 @@ app
       const parsedUrl = parse(req.url, true);
       handle(req, res, parsedUrl);
     }).listen(port, hostname, () => {
-      console.log(`Anadolu Lojistik ready on http://${hostname}:${port}`);
+      console.log(`Can Lojistik ready on http://${hostname}:${port}`);
     });
   })
   .catch((err) => {

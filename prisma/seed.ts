@@ -16,12 +16,14 @@ async function main() {
 
   await prisma.siteSettings.upsert({
     where: { id: 1 },
-    update: {},
+    update: {
+      email: "info@canlojistik.com",
+    },
     create: {
       id: 1,
       phone1: "+90 242 255 06 98",
       phone2: "+90 242 255 06 98",
-      email: "info@anadolulojistik.com",
+      email: "info@canlojistik.com",
       addressLine1: "Aşağıpazar Mahallesi 606 Sokak No: 5",
       addressLine2: "Korkuteli / Antalya",
     },

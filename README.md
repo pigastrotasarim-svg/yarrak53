@@ -1,4 +1,4 @@
-# Anadolu Lojistik
+# Can Lojistik
 
 Türkiye genelinde karayolu taşımacılığı, proje lojistiği ve depolama hizmetleri sunan kurumsal lojistik web sitesi. Admin paneli ile takip kodu oluşturma, il/ilçe seçimi, mesafe hesabı ve Türkiye haritasında kamyon animasyonu içerir.
 

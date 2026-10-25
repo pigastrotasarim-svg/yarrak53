@@ -13,7 +13,7 @@ export const revalidate = 0;
 export const metadata: Metadata = {
   title: "İletişim",
   description:
-    "Anadolu Lojistik iletişim bilgileri. Korkuteli / Antalya ofisimize ulaşın.",
+    "Can Lojistik iletişim bilgileri. Korkuteli / Antalya ofisimize ulaşın.",
 };
 
 export default async function ContactPage() {

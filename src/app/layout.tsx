@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     template: `%s | ${site.name}`,
   },
   description:
-    "Anadolu Lojistik — Türkiye genelinde karayolu taşımacılığı, proje lojistiği ve depolama hizmetleri. Sevkiyat takibi ve kurumsal lojistik çözümleri.",
+    "Can Lojistik — Türkiye genelinde karayolu taşımacılığı, proje lojistiği ve depolama hizmetleri. Sevkiyat takibi ve kurumsal lojistik çözümleri.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

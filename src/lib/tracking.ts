@@ -44,7 +44,7 @@ export function statusProgress(key: string) {
 export function generateTrackingCode() {
   const year = new Date().getFullYear();
   const rand = Math.floor(100000 + Math.random() * 900000);
-  return `AL${year}${rand}`;
+  return `CL${year}${rand}`;
 }
 
 /** Average highway truck speed used for ETA and road animation. */

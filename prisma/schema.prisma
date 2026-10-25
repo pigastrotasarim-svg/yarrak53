@@ -18,7 +18,7 @@ model SiteSettings {
   id           Int      @id @default(1)
   phone1       String   @default("+90 242 255 06 98")
   phone2       String   @default("+90 242 255 06 98")
-  email        String   @default("info@anadolulojistik.com")
+  email        String   @default("info@canlojistik.com")
   addressLine1 String   @default("Aşağıpazar Mahallesi 606 Sokak No: 5")
   addressLine2 String   @default("Korkuteli / Antalya")
   updatedAt    DateTime @updatedAt

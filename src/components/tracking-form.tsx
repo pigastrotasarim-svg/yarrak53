@@ -146,7 +146,7 @@ export function TrackingForm() {
                 id="tracking"
                 name="q"
                 defaultValue={initial}
-                placeholder="Örn. AL2026695781"
+                placeholder="Örn. CL2026695781"
                 autoComplete="off"
                 className="h-11 w-full rounded-lg border border-navy/15 bg-white px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
               />
@@ -158,7 +158,7 @@ export function TrackingForm() {
               </Button>
             </div>
             <p className="text-xs text-slate-ink/50">
-              Örnek: AL2026695781
+              Örnek: CL2026695781
             </p>
           </div>
         </form>

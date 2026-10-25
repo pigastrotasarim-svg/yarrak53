@@ -6,7 +6,7 @@ import { TrackingForm } from "@/components/tracking-form";
 export const metadata: Metadata = {
   title: "Takip Sorgulama",
   description:
-    "Anadolu Lojistik sevkiyat takip sorgulama. Takip numaranız ile gönderi durumunu öğrenin.",
+    "Can Lojistik sevkiyat takip sorgulama. Takip numaranız ile gönderi durumunu öğrenin.",
 };
 
 export default function TrackingPage() {

@@ -45,7 +45,7 @@ export function PageHero({
       >
         <FadeIn>
           <p className="mb-3 text-xs font-semibold uppercase tracking-[0.35em] text-amber">
-            Anadolu Lojistik
+            Can Lojistik
           </p>
           <h1 className="max-w-3xl font-display text-4xl leading-[1.05] tracking-wide text-white sm:text-5xl lg:text-6xl">
             {title}

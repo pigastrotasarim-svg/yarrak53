@@ -11,7 +11,7 @@ export default function HomePage() {
       <section className="relative isolate min-h-screen overflow-hidden">
         <Image
           src="/images/hero-banner.jpg"
-          alt="Anadolu Lojistik filo"
+          alt="Can Lojistik filo"
           fill
           priority
           className="object-cover"
@@ -23,7 +23,7 @@ export default function HomePage() {
         <div className="relative mx-auto flex min-h-screen max-w-7xl flex-col justify-end px-4 pb-20 pt-32 sm:px-6 lg:px-8">
           <FadeIn>
             <p className="font-display text-5xl tracking-[0.06em] text-white sm:text-6xl lg:text-7xl">
-              ANADOLU
+              CAN
               <span className="mt-1 block text-2xl tracking-[0.35em] text-amber sm:text-3xl">
                 LOJİSTİK
               </span>
@@ -136,7 +136,7 @@ export default function HomePage() {
         <div className="mx-auto grid max-w-7xl gap-10 px-4 sm:px-6 lg:grid-cols-[1.1fr_0.9fr] lg:px-8">
           <FadeIn>
             <p className="text-xs font-semibold uppercase tracking-[0.3em] text-amber">
-              Neden Anadolu
+              Neden Can Lojistik
             </p>
             <h2 className="mt-3 font-display text-4xl tracking-wide sm:text-5xl">
               Planlı sevkiyat, görünür süreç

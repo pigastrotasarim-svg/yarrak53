@@ -1,4 +1,4 @@
-# Netlify’ye yükleme (Anadolu Lojistik)
+# Netlify’ye yükleme (Can Lojistik)
 
 Bu proje **Next.js + PostgreSQL** kullanıyor. Netlify’de Neon/Postgres `DATABASE_URL` gerekir.
 

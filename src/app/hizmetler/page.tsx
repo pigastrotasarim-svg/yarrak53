@@ -9,7 +9,7 @@ import { services } from "@/lib/site";
 export const metadata: Metadata = {
   title: "Hizmetler",
   description:
-    "Karayolu taşımacılığı, proje taşımacılığı ve depolama hizmetleri — Anadolu Lojistik.",
+    "Karayolu taşımacılığı, proje taşımacılığı ve depolama hizmetleri — Can Lojistik.",
 };
 
 export default function ServicesPage() {

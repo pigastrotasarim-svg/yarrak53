@@ -1,4 +1,4 @@
-# Railway’ye yükleme (Anadolu Lojistik)
+# Railway’ye yükleme (Can Lojistik)
 
 Bu proje **Next.js + PostgreSQL** ile Railway’de çalışır.
 
@@ -40,7 +40,7 @@ Push veya **Deploy** ile build başlar.
 ## 5) Domain
 
 Service → **Settings** → **Networking** → **Generate Domain**  
-Örn. `anadolu-lojistik.up.railway.app`
+Örn. `can-lojistik.up.railway.app`
 
 Admin: `https://SENIN-DOMAIN/admin`
 

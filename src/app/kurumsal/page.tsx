@@ -8,7 +8,7 @@ import { corporatePages } from "@/lib/site";
 export const metadata: Metadata = {
   title: "Kurumsal",
   description:
-    "Anadolu Lojistik kurumsal yapı, etik uyum, yönetim sistemleri ve KVKK politikaları.",
+    "Can Lojistik kurumsal yapı, etik uyum, yönetim sistemleri ve KVKK politikaları.",
 };
 
 export default function CorporatePage() {
@@ -24,7 +24,7 @@ export default function CorporatePage() {
       <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
         <FadeIn>
           <h2 className="max-w-3xl font-display text-3xl tracking-wide text-navy sm:text-4xl">
-            Anadolu Lojistik olarak taşımayı yalnızca bir hizmet değil, güven
+            Can Lojistik olarak taşımayı yalnızca bir hizmet değil, güven
             ilişkisi olarak görüyoruz.
           </h2>
           <p className="mt-4 max-w-3xl leading-relaxed text-slate-ink/75">

@@ -18,7 +18,7 @@ export function AdminNav({ username }: { username: string }) {
       <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-4 sm:px-6">
         <div>
           <Link href="/admin" className="font-display text-xl tracking-wide">
-            Anadolu Admin
+            Can Admin
           </Link>
           <p className="text-xs text-white/60">Oturum: {username}</p>
         </div>

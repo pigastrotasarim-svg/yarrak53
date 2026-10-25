@@ -42,7 +42,7 @@ export default function AdminLoginPage() {
     <main className="mx-auto flex min-h-screen max-w-md flex-col justify-center px-4 py-16">
       <div className="rounded-2xl border border-navy/10 bg-white p-8 shadow-sm">
         <p className="text-xs font-semibold uppercase tracking-[0.25em] text-amber-deep">
-          Anadolu Lojistik
+          Can Lojistik
         </p>
         <h1 className="mt-2 font-display text-3xl tracking-wide text-navy">
           Admin Girişi

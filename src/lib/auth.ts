@@ -6,7 +6,7 @@ import bcrypt from "bcryptjs";
 const COOKIE_NAME = "al_admin_session";
 
 function secretKey() {
-  const secret = process.env.AUTH_SECRET || "anadolu-lojistik-dev-secret";
+  const secret = process.env.AUTH_SECRET || "can-lojistik-dev-secret";
   return new TextEncoder().encode(secret);
 }
 
