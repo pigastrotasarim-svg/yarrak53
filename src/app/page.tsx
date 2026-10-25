@@ -2,7 +2,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight, Fuel, ShieldCheck, Timer, Warehouse } from "lucide-react";
 import { FadeIn, Stagger, StaggerItem } from "@/components/motion";
-import { Button } from "@/components/ui/button";
 import { services, site } from "@/lib/site";
 
 export default function HomePage() {
@@ -36,24 +35,19 @@ export default function HomePage() {
               süreçlerinizi uçtan uca yönetiyoruz.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <Button
-                render={<Link href="/takip" />}
-                nativeButton={false}
-                size="lg"
-                className="bg-amber text-navy hover:bg-amber-light"
+              <Link
+                href="/takip"
+                className="inline-flex h-11 items-center gap-2 rounded-lg bg-amber px-5 text-sm font-semibold text-navy hover:bg-amber-light"
               >
                 Takip Sorgulama
-                <ArrowRight className="size-4" data-icon="inline-end" />
-              </Button>
-              <Button
-                render={<Link href="/hizmetler" />}
-                nativeButton={false}
-                size="lg"
-                variant="outline"
-                className="border-white/30 bg-white/5 text-white hover:bg-white/15 hover:text-white"
+                <ArrowRight className="size-4" />
+              </Link>
+              <Link
+                href="/hizmetler"
+                className="inline-flex h-11 items-center rounded-lg border border-white/30 bg-white/5 px-5 text-sm font-semibold text-white hover:bg-white/15"
               >
                 Hizmetlerimiz
-              </Button>
+              </Link>
             </div>
           </FadeIn>
         </div>
@@ -189,14 +183,12 @@ export default function HomePage() {
             </p>
           </FadeIn>
           <FadeIn delay={0.1}>
-            <Button
-              render={<Link href="/takip" />}
-                nativeButton={false}
-              size="lg"
-              className="bg-navy text-white hover:bg-navy-deep"
+            <Link
+              href="/takip"
+              className="inline-flex h-11 items-center rounded-lg bg-navy px-5 text-sm font-semibold text-white hover:bg-navy-deep"
             >
               Takip Sorgulama
-            </Button>
+            </Link>
           </FadeIn>
         </div>
       </section>

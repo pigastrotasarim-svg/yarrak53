@@ -2,8 +2,6 @@ import Link from "next/link";
 import { requireAdminPage } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { statusLabel } from "@/lib/tracking";
-import { Button } from "@/components/ui/button";
-
 export default async function AdminHomePage() {
   await requireAdminPage();
   const shipments = await prisma.shipment.findMany({
@@ -22,13 +20,12 @@ export default async function AdminHomePage() {
             Takip kodları, rota ve durum yönetimi
           </p>
         </div>
-        <Button
-          render={<Link href="/admin/yeni" />}
-          nativeButton={false}
-          className="bg-amber text-navy hover:bg-amber-light"
+        <Link
+          href="/admin/yeni"
+          className="inline-flex h-10 items-center rounded-lg bg-amber px-4 text-sm font-semibold text-navy hover:bg-amber-light"
         >
           Yeni takip kodu
-        </Button>
+        </Link>
       </div>
 
       <div className="mt-8 overflow-x-auto rounded-2xl border border-navy/10 bg-white">

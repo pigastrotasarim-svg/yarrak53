@@ -244,20 +244,18 @@ export default function AdminShipmentDetailPage({ id }: { id: string }) {
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <Button
-            render={<Link href={`/takip?q=${view.code}`} />}
-            nativeButton={false}
-            variant="outline"
+          <Link
+            href={`/takip?q=${view.code}`}
+            className="inline-flex h-9 items-center rounded-lg border border-navy/15 px-3 text-sm text-navy hover:bg-mist"
           >
             Müşteri görünümü
-          </Button>
-          <Button
-            render={<Link href="/admin" />}
-            nativeButton={false}
-            className="bg-navy text-white hover:bg-navy-deep"
+          </Link>
+          <Link
+            href="/admin"
+            className="inline-flex h-9 items-center rounded-lg bg-navy px-3 text-sm font-semibold text-white hover:bg-navy-deep"
           >
             Listeye dön
-          </Button>
+          </Link>
         </div>
       </div>
 

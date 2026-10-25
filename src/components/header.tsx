@@ -2,16 +2,15 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Menu, Search, X } from "lucide-react";
 import { navItems, site } from "@/lib/site";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 
 export function Header() {
   const pathname = usePathname();
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -26,6 +25,15 @@ export function Header() {
   useEffect(() => {
     setOpen(false);
   }, [pathname]);
+
+  function onSearch(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const fd = new FormData(e.currentTarget);
+    const q = String(fd.get("q") || "").trim();
+    setSearchOpen(false);
+    setOpen(false);
+    router.push(q ? `/takip?q=${encodeURIComponent(q)}` : "/takip");
+  }
 
   return (
     <header
@@ -77,55 +85,54 @@ export function Header() {
 
         <div className="hidden items-center gap-2 lg:flex">
           {searchOpen ? (
-            <form action="/takip" className="flex items-center gap-2">
-              <Input
+            <form onSubmit={onSearch} className="flex items-center gap-2">
+              <input
                 name="q"
                 placeholder="Takip no veya ara…"
-                className="h-9 w-52 border-white/20 bg-white/10 text-white placeholder:text-white/55"
+                className="h-9 w-52 rounded-lg border border-white/20 bg-white/10 px-3 text-sm text-white outline-none placeholder:text-white/55 focus-visible:ring-2 focus-visible:ring-amber/50"
                 autoFocus
               />
-              <Button
+              <button
                 type="button"
-                variant="ghost"
-                size="icon"
-                className="text-white hover:bg-white/10"
+                className="inline-flex size-9 items-center justify-center rounded-lg text-white hover:bg-white/10"
                 onClick={() => setSearchOpen(false)}
                 aria-label="Aramayı kapat"
               >
                 <X className="size-4" />
-              </Button>
+              </button>
+              <button
+                type="submit"
+                className="inline-flex h-9 items-center rounded-lg bg-amber px-3 text-sm font-semibold text-navy hover:bg-amber-light"
+              >
+                Ara
+              </button>
             </form>
           ) : (
-            <Button
+            <button
               type="button"
-              variant="ghost"
-              size="icon"
-              className="text-white hover:bg-white/10"
+              className="inline-flex size-9 items-center justify-center rounded-lg text-white hover:bg-white/10"
               onClick={() => setSearchOpen(true)}
               aria-label="Ara"
             >
               <Search className="size-4" />
-            </Button>
+            </button>
           )}
-          <Button
-            render={<Link href="/takip" />}
-                nativeButton={false}
-            className="bg-amber text-navy hover:bg-amber-light"
+          <Link
+            href="/takip"
+            className="inline-flex h-9 items-center rounded-lg bg-amber px-3 text-sm font-semibold text-navy hover:bg-amber-light"
           >
             Takip Et
-          </Button>
+          </Link>
         </div>
 
-        <Button
+        <button
           type="button"
-          variant="ghost"
-          size="icon"
-          className="text-white hover:bg-white/10 lg:hidden"
+          className="inline-flex size-10 items-center justify-center rounded-lg text-white hover:bg-white/10 lg:hidden"
           onClick={() => setOpen((v) => !v)}
           aria-label={open ? "Menüyü kapat" : "Menüyü aç"}
         >
           {open ? <X className="size-5" /> : <Menu className="size-5" />}
-        </Button>
+        </button>
       </div>
 
       {open && (
@@ -141,18 +148,18 @@ export function Header() {
               </Link>
             ))}
           </nav>
-          <form action="/takip" className="mt-3 flex gap-2">
-            <Input
+          <form onSubmit={onSearch} className="mt-3 flex gap-2">
+            <input
               name="q"
               placeholder="Takip numarası…"
-              className="border-white/20 bg-white/10 text-white placeholder:text-white/55"
+              className="h-10 flex-1 rounded-lg border border-white/20 bg-white/10 px-3 text-sm text-white outline-none placeholder:text-white/55"
             />
-            <Button
+            <button
               type="submit"
-              className="bg-amber text-navy hover:bg-amber-light"
+              className="inline-flex h-10 items-center rounded-lg bg-amber px-4 text-sm font-semibold text-navy hover:bg-amber-light"
             >
               Ara
-            </Button>
+            </button>
           </form>
         </div>
       )}

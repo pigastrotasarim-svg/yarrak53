@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
 
 export function AdminNav({ username }: { username: string }) {
   const router = useRouter();
@@ -23,37 +22,31 @@ export function AdminNav({ username }: { username: string }) {
           <p className="text-xs text-white/60">Oturum: {username}</p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <Button
-            render={<Link href="/admin" />}
-            nativeButton={false}
-            variant="outline"
-            className="border-white/20 bg-transparent text-white hover:bg-white/10"
+          <Link
+            href="/admin"
+            className="inline-flex h-9 items-center rounded-lg border border-white/20 px-3 text-sm text-white hover:bg-white/10"
           >
             Sevkiyatlar
-          </Button>
-          <Button
-            render={<Link href="/admin/yeni" />}
-            nativeButton={false}
-            className="bg-amber text-navy hover:bg-amber-light"
+          </Link>
+          <Link
+            href="/admin/yeni"
+            className="inline-flex h-9 items-center rounded-lg bg-amber px-3 text-sm font-semibold text-navy hover:bg-amber-light"
           >
             Yeni takip
-          </Button>
-          <Button
-            render={<Link href="/admin/ayarlar" />}
-            nativeButton={false}
-            variant="outline"
-            className="border-white/20 bg-transparent text-white hover:bg-white/10"
+          </Link>
+          <Link
+            href="/admin/ayarlar"
+            className="inline-flex h-9 items-center rounded-lg border border-white/20 px-3 text-sm text-white hover:bg-white/10"
           >
             GSM / İletişim
-          </Button>
-          <Button
+          </Link>
+          <button
             type="button"
-            variant="ghost"
-            className="text-white hover:bg-white/10"
+            className="inline-flex h-9 items-center rounded-lg px-3 text-sm text-white hover:bg-white/10"
             onClick={logout}
           >
             Çıkış
-          </Button>
+          </button>
         </div>
       </div>
     </div>

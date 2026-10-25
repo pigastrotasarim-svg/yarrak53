@@ -1,7 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { FadeIn } from "@/components/motion";
 
 type PageHeroProps = {
@@ -57,15 +56,13 @@ export function PageHero({
           ) : null}
           {ctaHref && ctaLabel ? (
             <div className="mt-8">
-              <Button
-                render={<Link href={ctaHref} />}
-                nativeButton={false}
-                size="lg"
-                className="bg-amber text-navy hover:bg-amber-light"
+              <Link
+                href={ctaHref}
+                className="inline-flex h-11 items-center gap-2 rounded-lg bg-amber px-5 text-sm font-semibold text-navy hover:bg-amber-light"
               >
                 {ctaLabel}
-                <ArrowRight className="size-4" data-icon="inline-end" />
-              </Button>
+                <ArrowRight className="size-4" />
+              </Link>
             </div>
           ) : null}
         </FadeIn>

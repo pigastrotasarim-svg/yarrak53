@@ -61,22 +61,19 @@ export default async function ServiceDetailPage({ params }: Props) {
             ))}
           </ul>
           <div className="mt-8 flex flex-wrap gap-3">
-            <Button
-              render={<Link href="/takip" />}
-                nativeButton={false}
-              className="bg-navy text-white hover:bg-navy-deep"
+            <Link
+              href="/takip"
+              className="inline-flex h-10 items-center rounded-lg bg-navy px-4 text-sm font-semibold text-white hover:bg-navy-deep"
             >
               Sevkiyat Takibi
-            </Button>
-            <Button
-              render={<Link href="/hizmetler" />}
-                nativeButton={false}
-              variant="outline"
-              className="border-navy/20"
+            </Link>
+            <Link
+              href="/hizmetler"
+              className="inline-flex h-10 items-center gap-2 rounded-lg border border-navy/20 px-4 text-sm font-semibold text-navy hover:bg-mist"
             >
               Tüm hizmetler
-              <ArrowRight className="size-4" data-icon="inline-end" />
-            </Button>
+              <ArrowRight className="size-4" />
+            </Link>
           </div>
         </FadeIn>
 
